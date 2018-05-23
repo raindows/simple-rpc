@@ -7,6 +7,7 @@
     <modules>
         <module>simple-rpc-remoting</module>
         <module>simple-rpc-common</module>
+        <module>simple-rpc-serialization</module>
     </modules>
 
     <groupId>org.simple.rpc</groupId>
@@ -38,6 +39,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>simple-rpc-remoting</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>simple-rpc-serialization</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

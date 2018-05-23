@@ -22,4 +22,13 @@ public class ByteHolder {
 	public void setBytes(byte[] bytes) {
 		this.bytes = bytes;
 	}
+
+	/**
+	 * 获取数据长度
+	 *
+	 * @return
+	 */
+	public int size() {
+		return this.bytes == null ? 0 : bytes.length;
+	}
 }

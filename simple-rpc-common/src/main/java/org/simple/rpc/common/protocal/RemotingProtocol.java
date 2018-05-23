@@ -11,6 +11,11 @@ package org.simple.rpc.common.protocal;
 public class RemotingProtocol {
 
 	/**
+	 * 请求协议头
+	 */
+	public static final short MAGIC_HEADER = (short) 0xbabe;
+
+	/**
 	 * 请求消息传输
 	 */
 	public static final byte REQUEST_REMOTING = 1;

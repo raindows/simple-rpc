@@ -16,6 +16,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>simple-rpc-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>simple-rpc-serialization</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.netty</groupId>

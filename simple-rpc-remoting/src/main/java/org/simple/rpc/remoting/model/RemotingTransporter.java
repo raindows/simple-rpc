@@ -17,7 +17,7 @@ public class RemotingTransporter extends ByteHolder {
 	private static final AtomicLong REQ_ATOMIC_LONG = new AtomicLong(0L);
 
 	/**
-	 * 请求类型<br/>
+	 * 事件code<br/>
 	 * 1: 消费者定位服务 2:服务者发布服务
 	 */
 	private           byte             code;
@@ -30,7 +30,7 @@ public class RemotingTransporter extends ByteHolder {
 	 */
 	private transient long             timestamp;
 	/**
-	 * 传输的对象类型
+	 * 传输的对象类型 请求 or 响应
 	 */
 	private           byte             transferType;
 	/**
