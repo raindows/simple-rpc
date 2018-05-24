@@ -22,7 +22,7 @@ public class RemotingTransporter extends ByteHolder {
 	 */
 	private           byte             code;
 	/**
-	 * 传输的内容主体信息
+	 * 传输的内容主体信息对象
 	 */
 	private transient CommonCustomBody customBody;
 	/**
@@ -73,6 +73,24 @@ public class RemotingTransporter extends ByteHolder {
 		remotingTransporter.setTransferType(RemotingProtocol.RESPONSE_REMOTING);
 		remotingTransporter.setRequestId(requestId);
 
+		return remotingTransporter;
+	}
+
+	/**
+	 * 创建Instance
+	 *
+	 * @param requestId
+	 * @param code
+	 * @param transferType
+	 * @param datas
+	 * @return
+	 */
+	public static RemotingTransporter newInstance(long requestId, byte code, byte transferType, byte[] datas) {
+		RemotingTransporter remotingTransporter = new RemotingTransporter();
+		remotingTransporter.setRequestId(requestId);
+		remotingTransporter.setCode(code);
+		remotingTransporter.setTransferType(transferType);
+		remotingTransporter.setBytes(datas);
 		return remotingTransporter;
 	}
 

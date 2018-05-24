@@ -15,20 +15,22 @@ public class ByteHolder {
 	 */
 	private transient byte[] bytes;
 
+	private transient int size;
+
 	public byte[] getBytes() {
 		return bytes;
 	}
 
 	public void setBytes(byte[] bytes) {
 		this.bytes = bytes;
+		if (bytes != null) setSize(bytes.length);
 	}
 
-	/**
-	 * 获取数据长度
-	 *
-	 * @return
-	 */
-	public int size() {
-		return this.bytes == null ? 0 : bytes.length;
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 }

@@ -9,7 +9,7 @@ import org.simple.rpc.remoting.model.RemotingTransporter;
 import org.simple.rpc.serialization.protostuff.ProtostuffSerializer;
 
 /**
- * <p>Netty编码器</p>
+ * <p>Netty编码器 对 {@link RemotingTransporter}</p>
  * <pre>
  *     author      XueQi
  *     date        2018/5/23
@@ -17,7 +17,7 @@ import org.simple.rpc.serialization.protostuff.ProtostuffSerializer;
  * </pre>
  */
 @ChannelHandler.Sharable    // 该编码器可以在多个Channel中使用 但要保证线程安全
-public class RemotingEncoder extends MessageToByteEncoder<RemotingTransporter> {
+public class RemotingTransporterEncoder extends MessageToByteEncoder<RemotingTransporter> {
 	@Override
 	protected void encode(ChannelHandlerContext channelHandlerContext, RemotingTransporter remotingTransporter, ByteBuf byteBuf) throws Exception {
 		execEncodingMessage(remotingTransporter, byteBuf);
