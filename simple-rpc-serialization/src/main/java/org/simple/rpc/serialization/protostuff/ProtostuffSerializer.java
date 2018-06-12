@@ -6,7 +6,6 @@ import io.protostuff.Schema;
 import io.protostuff.runtime.RuntimeSchema;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
-import org.simple.rpc.serialization.Serializer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *     email       sage.xue@vipshop.com
  * </pre>
  */
-public class ProtostuffSerializer implements Serializer {
+public class ProtostuffSerializer {
 	// 由于创建schema的过程非常耗时 所以需要缓存class对应的schema
 	private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
 	private static Objenesis                objenesis    = new ObjenesisStd(true);
@@ -36,7 +35,13 @@ public class ProtostuffSerializer implements Serializer {
 		return Holder.INSTANCE;
 	}
 
-	@Override
+	/**
+	 * 序列化对象
+	 *
+	 * @param obj
+	 * @param <T>
+	 * @return
+	 */
 	public <T> byte[] writeObject(T obj) {
 		// 获取待序列化的对象类型
 		Class<T> clazz = (Class<T>) obj.getClass();
@@ -53,7 +58,14 @@ public class ProtostuffSerializer implements Serializer {
 		}
 	}
 
-	@Override
+	/**
+	 * 反序列化对象
+	 *
+	 * @param bytes
+	 * @param clazz
+	 * @param <T>
+	 * @return
+	 */
 	public <T> T readObject(byte[] bytes, Class<T> clazz) {
 		try {
 			// 反射生成对象
@@ -66,6 +78,13 @@ public class ProtostuffSerializer implements Serializer {
 		}
 	}
 
+	/**
+	 * 获取 Schema Protostuff 序列化时 最耗时的阶段就是构建 schema 将对象的 schema 缓存化 提高效率
+	 *
+	 * @param clazz
+	 * @param <T>
+	 * @return
+	 */
 	private static <T> Schema<T> getSchema(Class<T> clazz) {
 		Schema<T> schema = (Schema<T>) cachedSchema.get(clazz);
 		if (schema == null) {
