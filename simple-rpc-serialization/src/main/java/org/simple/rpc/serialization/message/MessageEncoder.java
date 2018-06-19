@@ -1,4 +1,4 @@
-package org.simple.rpc.serialization.netty;
+package org.simple.rpc.serialization.message;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,7 +10,7 @@ import org.simple.rpc.serialization.protostuff.ProtostuffSerializer;
  * <pre>
  *     author      XueQi
  *     date        2018/6/12
- *     email       sage.xue@vipshop.com
+ *     email       job.xueqi@outlook.com
  * </pre>
  */
 public class MessageEncoder extends MessageToByteEncoder {

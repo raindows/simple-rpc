@@ -20,10 +20,18 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>simple-rpc-serialization</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.simple.rpc</groupId>
+            <artifactId>simple-rpc-config</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
 

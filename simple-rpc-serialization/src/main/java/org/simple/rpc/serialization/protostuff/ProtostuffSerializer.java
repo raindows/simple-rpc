@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <pre>
  *     author      XueQi
  *     date        2018/5/23
- *     email       sage.xue@vipshop.com
+ *     email       job.xueqi@outlook.com
  * </pre>
  */
 public class ProtostuffSerializer {

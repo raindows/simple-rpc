@@ -5,7 +5,7 @@ package org.simple.rpc.serialization;
  * <pre>
  *     author      XueQi
  *     date        2018/6/12
- *     email       sage.xue@vipshop.com
+ *     email       job.xueqi@outlook.com
  * </pre>
  */
 public class RpcRequest {
