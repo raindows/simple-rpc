@@ -1,8 +1,21 @@
 package org.simple.rpc.remoting;
 
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.commons.collections4.MapUtils;
 import org.simple.rpc.config.RpcService;
 import org.simple.rpc.config.ServerConfig;
+import org.simple.rpc.serialization.RpcRequest;
+import org.simple.rpc.serialization.RpcResponse;
+import org.simple.rpc.serialization.message.MessageDecoder;
+import org.simple.rpc.serialization.message.MessageEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -35,12 +48,22 @@ public class ProviderServer implements ApplicationContextAware, InitializingBean
 	 */
 	private ServerConfig serverConfig;
 
+	/**
+	 * Netty Boss线程 Group
+	 */
+	private EventLoopGroup bossGroup   = null;
+	/**
+	 * Netty 工作线程 Group
+	 */
+	private EventLoopGroup workerGroup = null;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// 判断是否注入ServerConfig对象，如果注入，以该配置为准，否则自动获取
 		if (serverConfig == null) {
 
 		}
+		// 执行启动逻辑
 	}
 
 	@Override
@@ -60,6 +83,41 @@ public class ProviderServer implements ApplicationContextAware, InitializingBean
 					providerServiceBean.put(interfaceName, serviceBean);
 				}
 			}
+		}
+	}
+
+	//...............//
+
+	/**
+	 * 启动方法
+	 */
+	private void start() throws Exception {
+		if (bossGroup == null && workerGroup == null) {
+			bossGroup = new NioEventLoopGroup();
+			workerGroup = new NioEventLoopGroup();
+
+			// 初始化Bootstrap
+			ServerBootstrap serverBootstrap = new ServerBootstrap();
+			serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+					.childHandler(new ChannelInitializer<SocketChannel>() {
+						@Override
+						protected void initChannel(SocketChannel socketChannel) throws Exception {
+							socketChannel.pipeline()
+									.addLast(new LengthFieldBasedFrameDecoder(65535, 0, 4, 0, 0))
+									.addLast(new MessageDecoder(RpcRequest.class))
+									.addLast(new MessageEncoder(RpcResponse.class))
+									.addLast(new ProviderHandler(providerServiceBean));
+						}
+					})
+					.option(ChannelOption.SO_BACKLOG, 128)
+					.childOption(ChannelOption.SO_KEEPALIVE, true);
+
+			// 绑定端口信息
+			String        address       = serverConfig.getAddress();
+			int           port          = serverConfig.getPort();
+			ChannelFuture channelFuture = serverBootstrap.bind(address, port);
+			LOGGER.info("server start in host:{},port:{}", address, port);
+			channelFuture.channel().closeFuture().sync();
 		}
 	}
 
