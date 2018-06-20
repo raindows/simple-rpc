@@ -14,9 +14,13 @@ public class RpcResponse {
 	 */
 	private String traceId;
 	/**
-	 * 响应错误信息描述 FIXME 未来替换成 Throwable
+	 * 响应错误信息
 	 */
-	private String error;
+	private String cause;
+	/**
+	 * 响应 code FIXME 规划框架码表
+	 */
+	private String code;
 	/**
 	 * 响应结果
 	 */
@@ -30,12 +34,12 @@ public class RpcResponse {
 		this.traceId = traceId;
 	}
 
-	public String getError() {
-		return error;
+	public String getCause() {
+		return cause;
 	}
 
-	public void setError(String error) {
-		this.error = error;
+	public void setCause(String cause) {
+		this.cause = cause;
 	}
 
 	public Object getResult() {
@@ -44,5 +48,13 @@ public class RpcResponse {
 
 	public void setResult(Object result) {
 		this.result = result;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 }
