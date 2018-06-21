@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>org.simple.rpc</groupId>
-            <artifactId>simple-rpc-remoting</artifactId>
+            <artifactId>simple-rpc-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.simple.rpc</groupId>
