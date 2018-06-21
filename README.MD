@@ -4,11 +4,13 @@
 ##### simple-rpc-common
     存放公用的工具类,Entity,自定义异常,枚举值等.
 ##### simple-rpc-config
-    存放与框架配置有关信息，包括服务器位置配置，注册中心配置，负载均衡配置
+    负责配置管理，获取配置信息的值等操作
 ##### simple-rpc-core
     RPC 框架核心模块，负责 Provider 服务端的实现和 Client 客户端的实现
-##### simple-rpc-serialization
-    RPC 框架序列化模块
+    - protocol
+        负责传输编码与解码
+    - provider
+        负责服务端核心实现
 
 #### 设计简介
 1. 传输消息格式

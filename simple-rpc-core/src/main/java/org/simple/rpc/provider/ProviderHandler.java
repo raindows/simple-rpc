@@ -4,8 +4,8 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.simple.rpc.serialization.RpcRequest;
-import org.simple.rpc.serialization.RpcResponse;
+import org.simple.rpc.common.domain.RpcRequest;
+import org.simple.rpc.common.domain.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

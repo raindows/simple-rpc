@@ -1,4 +1,4 @@
-package org.simple.rpc.serialization.message;
+package org.simple.rpc.protocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

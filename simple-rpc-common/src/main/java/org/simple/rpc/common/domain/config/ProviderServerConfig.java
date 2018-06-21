@@ -1,4 +1,4 @@
-package org.simple.rpc.config;
+package org.simple.rpc.common.domain.config;
 
 /**
  * <p>RPC Server端配置信息</p>
@@ -8,15 +8,15 @@ package org.simple.rpc.config;
  *     email       job.xueqi@outlook.com
  * </pre>
  */
-public class ServerConfig {
+public class ProviderServerConfig {
 
 	private String address;
 	private int    port;
 
-	public ServerConfig() {
+	public ProviderServerConfig() {
 	}
 
-	public ServerConfig(String address, int port) {
+	public ProviderServerConfig(String address, int port) {
 		this.address = address;
 		this.port = port;
 	}

@@ -10,12 +10,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.commons.collections4.MapUtils;
-import org.simple.rpc.config.RpcService;
-import org.simple.rpc.config.ServerConfig;
-import org.simple.rpc.serialization.RpcRequest;
-import org.simple.rpc.serialization.RpcResponse;
-import org.simple.rpc.serialization.message.MessageDecoder;
-import org.simple.rpc.serialization.message.MessageEncoder;
+import org.simple.rpc.common.annotation.RpcService;
+import org.simple.rpc.common.domain.config.ProviderServerConfig;
+import org.simple.rpc.common.domain.RpcRequest;
+import org.simple.rpc.common.domain.RpcResponse;
+import org.simple.rpc.protocol.MessageDecoder;
+import org.simple.rpc.protocol.MessageEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -46,7 +46,7 @@ public class ProviderServer implements ApplicationContextAware, InitializingBean
 	/**
 	 * 服务端配置
 	 */
-	private ServerConfig serverConfig;
+	private ProviderServerConfig providerServerConfig;
 
 	/**
 	 * Netty Boss线程 Group
@@ -60,7 +60,7 @@ public class ProviderServer implements ApplicationContextAware, InitializingBean
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// 判断是否注入ServerConfig对象，如果注入，以该配置为准，否则自动获取
-		if (serverConfig == null) {
+		if (providerServerConfig == null) {
 
 		}
 		// 执行启动逻辑
@@ -114,8 +114,8 @@ public class ProviderServer implements ApplicationContextAware, InitializingBean
 					.childOption(ChannelOption.SO_KEEPALIVE, true);
 
 			// 绑定端口信息
-			String        address       = serverConfig.getAddress();
-			int           port          = serverConfig.getPort();
+			String        address       = providerServerConfig.getAddress();
+			int           port          = providerServerConfig.getPort();
 			ChannelFuture channelFuture = serverBootstrap.bind(address, port);
 			LOGGER.info("server start in host:{},port:{}", address, port);
 			channelFuture.channel().closeFuture().sync();
@@ -123,7 +123,7 @@ public class ProviderServer implements ApplicationContextAware, InitializingBean
 	}
 
 	//...............//
-	public void setServerConfig(ServerConfig serverConfig) {
-		this.serverConfig = serverConfig;
+	public void setProviderServerConfig(ProviderServerConfig providerServerConfig) {
+		this.providerServerConfig = providerServerConfig;
 	}
 }

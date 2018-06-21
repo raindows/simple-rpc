@@ -1,4 +1,4 @@
-package org.simple.rpc.serialization;
+package org.simple.rpc.common.domain;
 
 /**
  * <p>请求通信对象</p>

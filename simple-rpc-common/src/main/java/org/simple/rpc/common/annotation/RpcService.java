@@ -1,4 +1,4 @@
-package org.simple.rpc.config;
+package org.simple.rpc.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

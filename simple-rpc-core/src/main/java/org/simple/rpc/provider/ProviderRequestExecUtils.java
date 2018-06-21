@@ -1,7 +1,7 @@
 package org.simple.rpc.provider;
 
-import org.simple.rpc.serialization.RpcRequest;
-import org.simple.rpc.serialization.RpcResponse;
+import org.simple.rpc.common.domain.RpcRequest;
+import org.simple.rpc.common.domain.RpcResponse;
 import org.springframework.cglib.reflect.FastClass;
 import org.springframework.cglib.reflect.FastMethod;
 

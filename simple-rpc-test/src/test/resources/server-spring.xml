@@ -7,12 +7,12 @@
     <context:component-scan base-package="org.simple.rpc.test"/>
 
     <!-- 服务器配置 -->
-    <bean id="serverConfig" class="org.simple.rpc.config.ServerConfig">
+    <bean id="serverConfig" class="org.simple.rpc.common.domain.config.ProviderServerConfig">
         <property name="address" value="127.0.0.1"/>
         <property name="port" value="8973"/>
     </bean>
     <bean class="org.simple.rpc.provider.ProviderServer">
-        <property name="serverConfig" ref="serverConfig"/>
+        <property name="providerServerConfig" ref="serverConfig"/>
     </bean>
 
 </beans>
