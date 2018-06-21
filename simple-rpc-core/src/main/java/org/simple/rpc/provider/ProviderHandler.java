@@ -1,10 +1,9 @@
-package org.simple.rpc.remoting;
+package org.simple.rpc.provider;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.simple.rpc.execute.ProviderRequestExecUtils;
 import org.simple.rpc.serialization.RpcRequest;
 import org.simple.rpc.serialization.RpcResponse;
 import org.slf4j.Logger;

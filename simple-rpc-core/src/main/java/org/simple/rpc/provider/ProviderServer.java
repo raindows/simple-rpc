@@ -1,4 +1,4 @@
-package org.simple.rpc.remoting;
+package org.simple.rpc.provider;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

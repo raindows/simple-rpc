@@ -1,4 +1,4 @@
-package org.simple.rpc.execute;
+package org.simple.rpc.provider;
 
 import org.simple.rpc.serialization.RpcRequest;
 import org.simple.rpc.serialization.RpcResponse;

@@ -11,7 +11,7 @@
         <property name="address" value="127.0.0.1"/>
         <property name="port" value="8973"/>
     </bean>
-    <bean class="org.simple.rpc.remoting.ProviderServer">
+    <bean class="org.simple.rpc.provider.ProviderServer">
         <property name="serverConfig" ref="serverConfig"/>
     </bean>
 
