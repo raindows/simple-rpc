@@ -64,6 +64,7 @@ public class ProviderServer implements ApplicationContextAware, InitializingBean
 
 		}
 		// 执行启动逻辑
+		start();
 	}
 
 	@Override

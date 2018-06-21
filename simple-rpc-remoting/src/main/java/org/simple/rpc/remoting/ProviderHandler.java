@@ -60,7 +60,7 @@ public class ProviderHandler extends SimpleChannelInboundHandler<RpcRequest> {
 				channelHandlerContext.writeAndFlush(response).addListener(new ChannelFutureListener() {
 					@Override
 					public void operationComplete(ChannelFuture channelFuture) throws Exception {
-						//  FIXME 操作完成回调监听事件
+						//  FIXME 操作完成回调监听事件 上报 trace 逻辑
 					}
 				});
 			}

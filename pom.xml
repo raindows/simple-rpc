@@ -9,6 +9,7 @@
         <module>simple-rpc-common</module>
         <module>simple-rpc-serialization</module>
         <module>simple-rpc-config</module>
+        <module>simple-rpc-test</module>
     </modules>
 
     <groupId>org.simple.rpc</groupId>
@@ -25,6 +26,7 @@
         <spring-framework.version>4.3.0.RELEASE</spring-framework.version>
         <fastjson.version>1.2.3</fastjson.version>
         <apache-commons.version>4.0</apache-commons.version>
+        <junit4.version>4.12</junit4.version>
     </properties>
 
     <dependencyManagement>
@@ -49,6 +51,12 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>simple-rpc-config</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.simple.rpc</groupId>
+                <artifactId>simple-rpc-test</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Netty -->
@@ -99,12 +107,24 @@
                 <artifactId>spring-context</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
 
             <!-- Apache Commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${apache-commons.version}</version>
+            </dependency>
+
+            <!-- Junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit4.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

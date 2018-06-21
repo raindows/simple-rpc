@@ -13,6 +13,9 @@ public class ServerConfig {
 	private String address;
 	private int    port;
 
+	public ServerConfig() {
+	}
+
 	public ServerConfig(String address, int port) {
 		this.address = address;
 		this.port = port;
@@ -24,5 +27,13 @@ public class ServerConfig {
 
 	public int getPort() {
 		return port;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }
