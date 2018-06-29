@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>simple-rpc</artifactId>
-        <groupId>org.simple.rpc</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <groupId>org.sagesource</groupId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,21 +13,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>simple-rpc-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.simple.rpc</groupId>
-            <artifactId>simple-rpc-config</artifactId>
+            <groupId>org.sagesource</groupId>
+            <artifactId>simple-rpc-basic</artifactId>
         </dependency>
 
+        <!-- Thrift -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
         </dependency>
     </dependencies>
 
