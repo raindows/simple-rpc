@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
@@ -77,12 +77,19 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Create TProtocol Pool Bean. ServerInfo=[{}]", ReflectionToStringBuilder.toString(this.serverInfo));
 
-		TSocket    tSocket    = new TSocket(this.serverInfo.getServerIP(), this.serverInfo.getPort(), this.timeout);
+		TSocket tSocket = null;
+		if (this.serverInfo.getServerIP() != null && this.serverInfo.getPort() != 0) {
+			tSocket = new TSocket(this.serverInfo.getServerIP(), this.serverInfo.getPort(), this.timeout);
+		} else {
+			// 通过 服务发现 获取一个可用的服务端地址 FIXME
+			tSocket = new TSocket("127.0.0.1", 8090, this.timeout);
+			// 服务没有发现 返回 null
+		}
 		TTransport tTransport = new TFramedTransport(tSocket, MAX_LENGTH);
 		if (tTransport != null && !tTransport.isOpen()) {
 			tTransport.open();
 		}
-		TProtocol protocol = new TCompactProtocol(tTransport);
+		TProtocol protocol = new TBinaryProtocol(tTransport);
 		return protocol;
 	}
 

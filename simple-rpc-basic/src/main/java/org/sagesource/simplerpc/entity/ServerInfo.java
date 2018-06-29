@@ -63,6 +63,7 @@ public class ServerInfo {
 		return this;
 	}
 
+
 	public String getServerIP() {
 		return serverIP;
 	}

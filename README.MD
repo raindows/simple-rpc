@@ -18,6 +18,8 @@
 #### 设计简介
 1. 基于 Facebook Thrift 进行开发
     Thrift 0.11.0
+    
+2. 客户端服务连接池
 
 #### TODO LIST
 1. 规范化日志输出
@@ -30,3 +32,4 @@
 8. 异步调用
 9. Codegen 代码生成工具
 10. Spring Support
+11. 本地 mock

@@ -40,34 +40,42 @@ public class ClientProtocolPoolFactory {
 	private static       Object                                           LOCK_OBJ        = new Object();
 
 	/**
-	 * 初始化服务连接池
+	 * 获取 初始化服务连接池
 	 *
 	 * @param serverInfo
 	 * @return
 	 */
-	public ObjectPool<TProtocol> create(ProtocolPoolConfig poolConfig, ServerInfo serverInfo) {
+	public void create(ProtocolPoolConfig poolConfig, ServerInfo serverInfo) {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Create Client Protocol Pool. PoolConfig=[{}],ServerInfo=[{}]", ReflectionToStringBuilder.toString(poolConfig), ReflectionToStringBuilder.toString(serverInfo));
 
 		// 服务名称,尝试从缓存中获取已存在的连接池
 		String                serviceName = serverInfo.getServiceName();
 		ObjectPool<TProtocol> cachePool   = cachePoolMapper.get(serviceName);
-		if (cachePool != null) return cachePool;
+		if (cachePool == null) {
 
-		// 创建线程池,防止同一服务端的多个服务，重复创建连接
-		synchronized (LOCK_OBJ) {
-			cachePool = cachePoolMapper.get(serviceName);
-			if (cachePool == null) {
-				ObjectPool<TProtocol> pool = new GenericObjectPool<>(
-						new TProtocolPooledFactory()
-								.buildKeepAlive(poolConfig.getKeepAlive())
-								.buildTimeout(poolConfig.getTimeout())
-								.buildServerInfo(serverInfo), poolConfig);
-				cachePoolMapper.put(serviceName, pool);
-				return pool;
+			// 创建线程池,防止同一服务端的多个服务，重复创建连接
+			synchronized (LOCK_OBJ) {
+				cachePool = cachePoolMapper.get(serviceName);
+				if (cachePool == null) {
+					ObjectPool<TProtocol> pool = new GenericObjectPool<>(
+							new TProtocolPooledFactory()
+									.buildKeepAlive(poolConfig.getKeepAlive())
+									.buildTimeout(poolConfig.getTimeout())
+									.buildServerInfo(serverInfo), poolConfig);
+					cachePoolMapper.put(serviceName, pool);
+				}
 			}
-			return cachePool;
 		}
 	}
 
+	/**
+	 * 获取连接池
+	 *
+	 * @param serverInfo
+	 * @return
+	 */
+	public ObjectPool<TProtocol> getProtocolPool(ServerInfo serverInfo) {
+		return cachePoolMapper.get(serverInfo.getServiceName());
+	}
 }

@@ -36,6 +36,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>simple-rpc-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>simple-rpc-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
