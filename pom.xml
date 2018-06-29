@@ -12,6 +12,8 @@
     <modules>
         <module>simple-rpc-core</module>
         <module>simple-rpc-basic</module>
+        <module>simple-rpc-client</module>
+        <module>simple-rpc-test</module>
     </modules>
 
     <properties>

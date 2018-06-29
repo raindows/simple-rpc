@@ -9,19 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>simple-rpc-core</artifactId>
+    <artifactId>simple-rpc-test</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.sagesource</groupId>
-            <artifactId>simple-rpc-basic</artifactId>
-        </dependency>
-
-        <!-- Thrift -->
-        <dependency>
-            <groupId>org.apache.thrift</groupId>
-            <artifactId>libthrift</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

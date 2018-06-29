@@ -9,14 +9,15 @@
     RPC 框架核心模块，负责 Provider 服务端的实现和 Client 客户端的实现
     - protocol
         负责创建客户端的TProtocol对象池工厂
-    - provider
-        负责服务端核心实现
+
+#### simple-rpc-client
+    RPC 框架客户端实现，负责创建调用方客户端生成，过滤器等
     - client
-        负责客户端核心实现，动态代理，消息传输与解析
+    - filter
 
 #### 设计简介
 1. 基于 Facebook Thrift 进行开发
-
+    Thrift 0.11.0
 
 #### TODO LIST
 1. 规范化日志输出

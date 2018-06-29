@@ -39,7 +39,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	 * @param serverInfo
 	 * @return
 	 */
-	private TProtocolPooledFactory buildServerInfo(ServerInfo serverInfo) {
+	public TProtocolPooledFactory buildServerInfo(ServerInfo serverInfo) {
 		this.serverInfo = serverInfo;
 		return this;
 	}
@@ -50,7 +50,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	 * @param timeout
 	 * @return
 	 */
-	private TProtocolPooledFactory buildTimeout(int timeout) {
+	public TProtocolPooledFactory buildTimeout(int timeout) {
 		this.timeout = timeout;
 		return this;
 	}
@@ -61,7 +61,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	 * @param keepAlive
 	 * @return
 	 */
-	private TProtocolPooledFactory buildKeepAlive(boolean keepAlive) {
+	public TProtocolPooledFactory buildKeepAlive(boolean keepAlive) {
 		this.keepAlive = keepAlive;
 		return this;
 	}
