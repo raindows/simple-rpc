@@ -8,7 +8,7 @@
 ##### simple-rpc-core
     RPC 框架核心模块，负责 Provider 服务端的实现和 Client 客户端的实现
     - protocol
-        负责传输编码与解码
+        负责创建客户端的TProtocol对象池工厂
     - provider
         负责服务端核心实现
     - client

@@ -19,6 +19,7 @@
         <spring-framework.version>4.3.0.RELEASE</spring-framework.version>
         <apache-commons.version>4.0</apache-commons.version>
         <apache-pools.version>2.5.0</apache-pools.version>
+        <apache-lang3.version>3.7</apache-lang3.version>
         <junit4.version>4.12</junit4.version>
         <thrift.version>0.11.0</thrift.version>
     </properties>
@@ -67,8 +68,18 @@
             <!-- Apache Commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${apache-pools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${apache-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache-lang3.version}</version>
             </dependency>
 
             <!-- Junit -->
