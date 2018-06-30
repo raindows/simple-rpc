@@ -2,7 +2,6 @@ package org.sagesource.simplerpc.client.proxy;
 
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.thrift.protocol.TProtocol;
-import org.sagesource.simplerpc.client.pool.ClientProtocolPoolFactory;
 import org.sagesource.simplerpc.entity.ProtocolPoolConfig;
 import org.sagesource.simplerpc.entity.ServerInfo;
 import org.slf4j.Logger;
@@ -68,12 +67,6 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		String serviceName = this.serverInfo.getServiceName();
-
-		// 判断连接池是否存在，如果不存在，需要创建
-		//if (this.clientProtocolPool == null) {
-		ClientProtocolPoolFactory.getInstance().create(this.protocolPoolConfig, this.serverInfo);
-		this.clientProtocolPool = ClientProtocolPoolFactory.getInstance().getProtocolPool(this.serverInfo);
-		//}
 
 		// 从连接池中获取连接
 		TProtocol protocol = null;

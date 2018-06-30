@@ -83,7 +83,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 		} else {
 			// 通过 服务发现 获取一个可用的服务端地址 FIXME
 			tSocket = new TSocket("127.0.0.1", 8090, this.timeout);
-			// 服务没有发现 返回 null
+			// 服务没有发现 返回异常
 		}
 		TTransport tTransport = new TFramedTransport(tSocket, MAX_LENGTH);
 		if (tTransport != null && !tTransport.isOpen()) {

@@ -48,9 +48,9 @@ public class ServiceClientProxy {
 			return (T) cacheClient;
 		}
 
-		// 获取连接池，连接池为空不要紧，动态代理方法执行前，还需要判断
+		// 获取连接池
 		ServerInfo            serverInfo         = new ServerInfo().buildServiceName(serviceName).buildServiceVersion(version);
-		ObjectPool<TProtocol> clientProtocolPool = ClientProtocolPoolFactory.getInstance().getProtocolPool(serverInfo);
+		ObjectPool<TProtocol> clientProtocolPool = ClientProtocolPoolFactory.getInstance().createOrObtain(protocolPoolConfig, serverInfo);
 
 		// 基于 JDK 动态代理获取 Client
 		ServiceClientProxyInvocationHandler proxyInvocationHandler = new ServiceClientProxyInvocationHandler()

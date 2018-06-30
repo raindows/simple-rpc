@@ -45,15 +45,16 @@ public class ClientProtocolPoolFactory {
 	 * @param serverInfo
 	 * @return
 	 */
-	public void create(ProtocolPoolConfig poolConfig, ServerInfo serverInfo) {
+	public ObjectPool<TProtocol> createOrObtain(ProtocolPoolConfig poolConfig, ServerInfo serverInfo) {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Create Client Protocol Pool. PoolConfig=[{}],ServerInfo=[{}]", ReflectionToStringBuilder.toString(poolConfig), ReflectionToStringBuilder.toString(serverInfo));
 
 		// 服务名称,尝试从缓存中获取已存在的连接池
 		String                serviceName = serverInfo.getServiceName();
 		ObjectPool<TProtocol> cachePool   = cachePoolMapper.get(serviceName);
-		if (cachePool == null) {
-
+		if (cachePool != null) {
+			return cachePool;
+		} else {
 			// 创建线程池,防止同一服务端的多个服务，重复创建连接
 			synchronized (LOCK_OBJ) {
 				cachePool = cachePoolMapper.get(serviceName);
@@ -64,18 +65,10 @@ public class ClientProtocolPoolFactory {
 									.buildTimeout(poolConfig.getTimeout())
 									.buildServerInfo(serverInfo), poolConfig);
 					cachePoolMapper.put(serviceName, pool);
+					return pool;
 				}
+				return cachePool;
 			}
 		}
-	}
-
-	/**
-	 * 获取连接池
-	 *
-	 * @param serverInfo
-	 * @return
-	 */
-	public ObjectPool<TProtocol> getProtocolPool(ServerInfo serverInfo) {
-		return cachePoolMapper.get(serverInfo.getServiceName());
 	}
 }
