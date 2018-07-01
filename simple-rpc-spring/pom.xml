@@ -9,24 +9,17 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>simple-rpc-test</artifactId>
+    <artifactId>simple-rpc-spring</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.sagesource</groupId>
             <artifactId>simple-rpc-client</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.sagesource</groupId>
-            <artifactId>simple-rpc-spring</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
 
