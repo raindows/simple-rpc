@@ -27,6 +27,7 @@ public class SpringClientDemo {
 
 	@Test
 	public void test() throws TException {
+		System.setProperty("SIMPLERPC_STATIC_ROUTER", "*=127.0.0.1:8090");
 		System.out.println(helloWorldService.sayHello("sage"));
 	}
 }

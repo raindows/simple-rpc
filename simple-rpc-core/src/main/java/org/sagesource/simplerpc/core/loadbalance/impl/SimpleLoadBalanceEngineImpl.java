@@ -78,7 +78,7 @@ public class SimpleLoadBalanceEngineImpl implements LoadBalanceEngine {
 			staticRouterStr = staticRouterMapper.get("*." + version);
 			if (StringUtils.isEmpty(staticRouterStr)) {
 				// 获取 * 全局静态路由配置
-				staticRouterStr = staticRouterMapper.get("*.");
+				staticRouterStr = staticRouterMapper.get("*");
 				// 获取 serviceName.version 静态路由配置
 				if (StringUtils.isEmpty(staticRouterStr)) {
 					staticRouterStr = staticRouterMapper.get(serviceName + "." + version);

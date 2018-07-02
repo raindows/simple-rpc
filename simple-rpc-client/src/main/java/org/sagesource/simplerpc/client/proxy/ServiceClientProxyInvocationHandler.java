@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.SocketTimeoutException;
 
@@ -86,13 +87,19 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 			// 实例化构造方法
 			Object clientInstance = clientInterfaceClazz.getConstructor(TProtocol.class).newInstance(protocol);
 			result = method.invoke(clientInstance, args);
-		} catch (SocketTimeoutException ex) {
-			// 对于连接超时的请求，在返回数据源的时候，需要关闭连接，避免连接被其他请求复用，获取到错误的结果
-			protocol.getTransport().flush();
-			protocol.getTransport().close();
 		} catch (Exception e) {
-			// fixme
-			e.printStackTrace();
+			if (e instanceof InvocationTargetException) {
+				// 动态代理执行阶段异常
+				InvocationTargetException ex = (InvocationTargetException) e;
+				if (ex.getTargetException().getCause() instanceof SocketTimeoutException) {
+					// 对于连接超时的请求，在返回数据源的时候，需要关闭连接，避免连接被其他请求复用，获取到错误的结果
+					protocol.getTransport().flush();
+					protocol.getTransport().close();
+					// FIXME 超时异常需要包装抛出
+				}
+			}
+			// todo: 未来异常需要分组并上传到监控
+			throw e;
 		} finally {
 			if (clientProtocolPool != null && protocol != null) {
 				clientProtocolPool.returnObject(protocol);
