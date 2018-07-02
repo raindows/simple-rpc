@@ -1,7 +1,6 @@
 package org.sagesource.simplerpc.client.proxy;
 
 import org.sagesource.simplerpc.entity.ProtocolPoolConfig;
-import org.sagesource.simplerpc.entity.ServerInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +45,11 @@ public class ServiceClientProxy {
 			return (T) cacheClient;
 		}
 
-		// TODO: 服务地址支持静态路由
-		ServerInfo serverInfo = new ServerInfo().buildServiceName(serviceName).buildServiceVersion(version);
 		// 基于 JDK 动态代理获取 Client
 		ServiceClientProxyInvocationHandler proxyInvocationHandler = new ServiceClientProxyInvocationHandler()
 				.buildProtocolPoolConfig(protocolPoolConfig)
-				.buildServerInfo(serverInfo);
+				.buildServiceName(serviceName)
+				.buildVersion(version);
 
 		T client = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, proxyInvocationHandler);
 		if (client != null) {

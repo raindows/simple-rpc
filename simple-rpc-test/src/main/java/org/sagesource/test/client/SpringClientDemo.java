@@ -27,6 +27,6 @@ public class SpringClientDemo {
 
 	@Test
 	public void test() throws TException {
-		System.out.println(helloWorldService.sayHello("`111111"));
+		System.out.println(helloWorldService.sayHello("sage"));
 	}
 }

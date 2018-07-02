@@ -6,7 +6,6 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.thrift.protocol.TProtocol;
 import org.sagesource.simplerpc.core.protocol.TProtocolPooledFactory;
 import org.sagesource.simplerpc.entity.ProtocolPoolConfig;
-import org.sagesource.simplerpc.entity.ServerInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,16 +41,17 @@ public class ClientProtocolPoolFactory {
 	/**
 	 * 获取 初始化服务连接池
 	 *
-	 * @param serverInfo
+	 * @param serviceName
+	 * @param version
 	 * @return
 	 */
-	public ObjectPool<TProtocol> createOrObtain(ProtocolPoolConfig poolConfig, ServerInfo serverInfo) {
+	public ObjectPool<TProtocol> createOrObtain(ProtocolPoolConfig poolConfig, String serviceName, String version) {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Create Client Protocol Pool. PoolConfig=[{}],ServerInfo=[{}]", ReflectionToStringBuilder.toString(poolConfig), ReflectionToStringBuilder.toString(serverInfo));
+			LOGGER.debug("Create Client Protocol Pool. PoolConfig=[{}],ServiceName=[{}],Version=[{}]",
+					ReflectionToStringBuilder.toString(poolConfig), serviceName, version);
 
 		// 服务名称,尝试从缓存中获取已存在的连接池
-		String                serviceName = serverInfo.getServiceName();
-		ObjectPool<TProtocol> cachePool   = cachePoolMapper.get(serviceName);
+		ObjectPool<TProtocol> cachePool = cachePoolMapper.get(serviceName);
 		if (cachePool != null) {
 			return cachePool;
 		} else {
@@ -63,7 +63,8 @@ public class ClientProtocolPoolFactory {
 							new TProtocolPooledFactory()
 									.buildKeepAlive(poolConfig.getKeepAlive())
 									.buildTimeout(poolConfig.getTimeout())
-									.buildServerInfo(serverInfo), poolConfig);
+									.buildServiceName(serviceName)
+									.buildVersion(version), poolConfig);
 					cachePoolMapper.put(serviceName, pool);
 					return pool;
 				}

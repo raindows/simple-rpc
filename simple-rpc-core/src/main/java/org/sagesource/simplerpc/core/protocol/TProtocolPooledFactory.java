@@ -1,6 +1,5 @@
 package org.sagesource.simplerpc.core.protocol;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
@@ -9,9 +8,13 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.sagesource.simplerpc.core.loadbalance.LoadBalanceFactory;
 import org.sagesource.simplerpc.entity.ServerInfo;
+import org.sagesource.simplerpc.exception.SimpleRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
 
 /**
  * <p>TProtocol对象池工厂 服务调用方在初始化调用客户端前创建TProtocol连接对象</p>
@@ -26,21 +29,34 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 
 	private static final int MAX_LENGTH = 1638400000; // 单次最大传输的数据量（1.6G）
 
-	// 服务端地址
-	private ServerInfo serverInfo;
+	// 服务名称
+	private String serviceName;
+	// 服务版本号
+	private String version;
 	// 超时时间
 	private int     timeout   = 3000000;
 	// 保持长连接
 	private boolean keepAlive = true;
 
 	/**
-	 * 构建服务端地址
+	 * 设置服务名称
 	 *
-	 * @param serverInfo
+	 * @param serviceName
 	 * @return
 	 */
-	public TProtocolPooledFactory buildServerInfo(ServerInfo serverInfo) {
-		this.serverInfo = serverInfo;
+	public TProtocolPooledFactory buildServiceName(String serviceName) {
+		this.serviceName = serviceName;
+		return this;
+	}
+
+	/**
+	 * 设置服务版本号
+	 *
+	 * @param version
+	 * @return
+	 */
+	public TProtocolPooledFactory buildVersion(String version) {
+		this.version = version;
 		return this;
 	}
 
@@ -75,16 +91,17 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	@Override
 	public TProtocol create() throws Exception {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Create TProtocol Pool Bean. ServerInfo=[{}]", ReflectionToStringBuilder.toString(this.serverInfo));
+			LOGGER.debug("Create TProtocol Pool Bean. ServiceName=" + this.serviceName + " Version=" + this.version);
 
-		TSocket tSocket = null;
-		if (this.serverInfo.getServerIP() != null && this.serverInfo.getPort() != 0) {
-			tSocket = new TSocket(this.serverInfo.getServerIP(), this.serverInfo.getPort(), this.timeout);
-		} else {
-			// 通过 服务发现 获取一个可用的服务端地址 FIXME
-			tSocket = new TSocket("127.0.0.1", 8090, this.timeout);
-			// 服务没有发现 返回异常
+		// 通过 LoadBalance 获取服务连接
+		ServerInfo serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version);
+		if (serverInfo == null) {
+			throw new SimpleRpcException(MessageFormat.format("SERVICE:[{0}]:VERSION:[{1}] ADDRESS NOT FOUND.",
+					this.serviceName, this.version));
 		}
+
+		// 创建 Thrift 连接配置
+		TSocket    tSocket    = new TSocket(serverInfo.getServerIP(), serverInfo.getPort(), this.timeout);
 		TTransport tTransport = new TFramedTransport(tSocket, MAX_LENGTH);
 		if (tTransport != null && !tTransport.isOpen()) {
 			tTransport.open();
@@ -113,7 +130,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	@Override
 	public void passivateObject(PooledObject<TProtocol> p) throws Exception {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Passivate TProtocol Pool Bean. ServerInfo=[{}],KeepAlive={}", ReflectionToStringBuilder.toString(this.serverInfo), this.keepAlive);
+			LOGGER.debug("Passivate TProtocol Pool Bean. ServiceName=" + this.serviceName + " Version=" + this.version + " KeepAlive=" + this.keepAlive);
 
 		if (!this.keepAlive && p.getObject() != null) {
 			p.getObject().getTransport().flush();
@@ -130,7 +147,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	@Override
 	public void activateObject(PooledObject<TProtocol> p) throws Exception {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Activate TProtocol Pool Bean. ServerInfo=[{}]", ReflectionToStringBuilder.toString(this.serverInfo));
+			LOGGER.debug("Activate TProtocol Pool Bean. ServiceName=" + this.serviceName + " Version=" + this.version);
 
 		if (p.getObject() != null && !p.getObject().getTransport().isOpen()) {
 			p.getObject().getTransport().open();
@@ -146,7 +163,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	@Override
 	public void destroyObject(PooledObject<TProtocol> p) throws Exception {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Destroy TProtocol Pool Bean. ServerInfo=[{}]", ReflectionToStringBuilder.toString(this.serverInfo));
+			LOGGER.debug("Destroy TProtocol Pool Bean. ServiceName=" + this.serviceName + " Version=" + this.version);
 
 		if (p.getObject() != null && p.getObject().getTransport().isOpen()) {
 			p.getObject().getTransport().flush();

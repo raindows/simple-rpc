@@ -24,13 +24,16 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	private static Logger LOGGER = LoggerFactory.getLogger(ServiceClientProxyInvocationHandler.class);
 
 	// 客户端接口名称后缀
-	private static final String SERVICE_ICLIENT_NAME       = "$Client";
-	private static final String SERVICE_ASYNC_ICLIENT_NAME = "$AsyncClient";
+	private static final String SERVICE_ICLIENT_NAME = "$Client";
 
 	// 连接池配置信息
 	private ProtocolPoolConfig protocolPoolConfig;
 	// 服务端信息
 	private ServerInfo         serverInfo;
+	// 服务名称
+	private String             serviceName;
+	// 服务版本号
+	private String             version;
 
 	/**
 	 * 设置连接池配置信息
@@ -44,27 +47,36 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	}
 
 	/**
-	 * 设置服务端信息
+	 * 设置服务名称
 	 *
-	 * @param serverInfo
+	 * @param serviceName
 	 * @return
 	 */
-	public ServiceClientProxyInvocationHandler buildServerInfo(ServerInfo serverInfo) {
-		this.serverInfo = serverInfo;
+	public ServiceClientProxyInvocationHandler buildServiceName(String serviceName) {
+		this.serviceName = serviceName;
+		return this;
+	}
+
+	/**
+	 * 设置版本号
+	 *
+	 * @param version
+	 * @return
+	 */
+	public ServiceClientProxyInvocationHandler buildVersion(String version) {
+		this.version = version;
 		return this;
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		String serviceName = this.serverInfo.getServiceName();
-
 		// 从连接池中获取连接
 		TProtocol             protocol           = null;
 		Object                result             = null;
 		ObjectPool<TProtocol> clientProtocolPool = null;
 		try {
 			// 获取线程池
-			clientProtocolPool = ClientProtocolPoolFactory.getInstance().createOrObtain(this.protocolPoolConfig, this.serverInfo);
+			clientProtocolPool = ClientProtocolPoolFactory.getInstance().createOrObtain(this.protocolPoolConfig, this.serviceName, this.version);
 			protocol = clientProtocolPool.borrowObject();
 
 			// 创建客户端对象
@@ -82,7 +94,7 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 			// fixme
 			e.printStackTrace();
 		} finally {
-			if (clientProtocolPool != null) {
+			if (clientProtocolPool != null && protocol != null) {
 				clientProtocolPool.returnObject(protocol);
 			}
 		}
