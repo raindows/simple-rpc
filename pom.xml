@@ -25,6 +25,7 @@
         <apache-lang3.version>3.7</apache-lang3.version>
         <junit4.version>4.12</junit4.version>
         <thrift.version>0.11.0</thrift.version>
+        <guava.version>22.0</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -92,6 +93,13 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache-lang3.version}</version>
+            </dependency>
+
+            <!-- Google Guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
 
             <!-- Junit -->

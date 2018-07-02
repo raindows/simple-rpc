@@ -9,6 +9,9 @@
     RPC 框架核心模块，负责 Provider 服务端的实现和 Client 客户端的实现
     - protocol
         负责创建客户端的TProtocol对象池工厂
+    - loadbalance
+        负责服务地址发现，负载均衡
+            静态路由 ZK获取 加权轮询
 
 #### simple-rpc-client
     RPC 框架客户端实现，负责创建调用方客户端生成，过滤器等
