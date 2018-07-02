@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.SocketTimeoutException;
 
 /**
  * <p>Client 动态代理 Handler</p>
@@ -30,8 +31,6 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	private ProtocolPoolConfig protocolPoolConfig;
 	// 服务端信息
 	private ServerInfo         serverInfo;
-	// 异步客户端判断
-	private boolean            isAsync;
 
 	/**
 	 * 设置连接池配置信息
@@ -55,17 +54,6 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 		return this;
 	}
 
-	/**
-	 * 设置异步客户端标示
-	 *
-	 * @param isAsync
-	 * @return
-	 */
-	public ServiceClientProxyInvocationHandler buildIsAsync(boolean isAsync) {
-		this.isAsync = isAsync;
-		return this;
-	}
-
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		String serviceName = this.serverInfo.getServiceName();
@@ -80,17 +68,16 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 			protocol = clientProtocolPool.borrowObject();
 
 			// 创建客户端对象
-			String clientInterfaceName = null;
-			if (isAsync) {
-				clientInterfaceName = serviceName.concat(SERVICE_ASYNC_ICLIENT_NAME);
-			} else {
-				clientInterfaceName = serviceName.concat(SERVICE_ICLIENT_NAME);
-			}
-			Class clientInterfaceClazz = Class.forName(clientInterfaceName);
+			String clientInterfaceName  = serviceName.concat(SERVICE_ICLIENT_NAME);
+			Class  clientInterfaceClazz = Class.forName(clientInterfaceName);
 
 			// 实例化构造方法
 			Object clientInstance = clientInterfaceClazz.getConstructor(TProtocol.class).newInstance(protocol);
 			result = method.invoke(clientInstance, args);
+		} catch (SocketTimeoutException ex) {
+			// 对于连接超时的请求，在返回数据源的时候，需要关闭连接，避免连接被其他请求复用，获取到错误的结果
+			protocol.getTransport().flush();
+			protocol.getTransport().close();
 		} catch (Exception e) {
 			// fixme
 			e.printStackTrace();

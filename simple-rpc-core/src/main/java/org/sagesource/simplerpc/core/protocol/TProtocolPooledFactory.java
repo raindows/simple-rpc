@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
@@ -89,7 +89,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 		if (tTransport != null && !tTransport.isOpen()) {
 			tTransport.open();
 		}
-		TProtocol protocol = new TBinaryProtocol(tTransport);
+		TProtocol protocol = new TCompactProtocol(tTransport);
 		return protocol;
 	}
 

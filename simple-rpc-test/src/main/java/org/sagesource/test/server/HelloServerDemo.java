@@ -2,7 +2,7 @@ package org.sagesource.test.server;
 
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.TProcessorFactory;
-import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.transport.TFramedTransport;
@@ -28,7 +28,7 @@ public class HelloServerDemo {
 			TThreadedSelectorServer.Args tArgs           = new TThreadedSelectorServer.Args(serverTransport);
 			tArgs.processorFactory(new TProcessorFactory(tprocessor));
 			tArgs.transportFactory(new TFramedTransport.Factory());
-			tArgs.protocolFactory(new TBinaryProtocol.Factory());
+			tArgs.protocolFactory(new TCompactProtocol.Factory());
 
 			TServer server = new TThreadedSelectorServer(tArgs);
 			server.serve();
