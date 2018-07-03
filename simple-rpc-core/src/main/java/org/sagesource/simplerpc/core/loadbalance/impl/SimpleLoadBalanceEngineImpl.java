@@ -6,6 +6,7 @@ import org.sagesource.simplerpc.core.loadbalance.LoadBalanceEngine;
 import org.sagesource.simplerpc.core.loadbalance.RoundRobinFactory;
 import org.sagesource.simplerpc.entity.ServerInfo;
 import org.sagesource.simplerpc.exception.SimpleRpcException;
+import org.sagesource.simplerpc.utils.ConfigValueUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +58,8 @@ public class SimpleLoadBalanceEngineImpl implements LoadBalanceEngine {
 	 */
 	private ServerInfo queryStaticRouterConfig(String serviceName, String version) {
 		// 先获取 JVM 的属性配置
-		String jvmStaticRouterConfig = System.getProperty("simplerpc.static.router");
-		String envStaticRouterConfig = System.getProperty("SIMPLERPC_STATIC_ROUTER");
+		String jvmStaticRouterConfig = ConfigValueUtils.getJvmPropertyValue("simplerpc.static.router", null);
+		String envStaticRouterConfig = ConfigValueUtils.getEnvPropertyValue("SIMPLERPC_STATIC_ROUTER", null);
 		String staticRouterConfig    = null;
 		if (!StringUtils.isEmpty(jvmStaticRouterConfig)) {
 			staticRouterConfig = jvmStaticRouterConfig;
