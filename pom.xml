@@ -26,6 +26,8 @@
         <junit4.version>4.12</junit4.version>
         <thrift.version>0.11.0</thrift.version>
         <guava.version>22.0</guava.version>
+        <zookeeper.version>3.4.8</zookeeper.version>
+        <curator.version>3.1.0</curator.version>
     </properties>
 
     <dependencyManagement>
@@ -107,6 +109,19 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit4.version}</version>
+            </dependency>
+
+            <!-- Zookeeper -->
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
