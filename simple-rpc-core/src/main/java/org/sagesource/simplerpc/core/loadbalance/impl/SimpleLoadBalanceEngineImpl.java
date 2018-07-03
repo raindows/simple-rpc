@@ -3,6 +3,7 @@ package org.sagesource.simplerpc.core.loadbalance.impl;
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
 import org.sagesource.simplerpc.core.loadbalance.LoadBalanceEngine;
+import org.sagesource.simplerpc.core.loadbalance.RoundRobinFactory;
 import org.sagesource.simplerpc.entity.ServerInfo;
 import org.sagesource.simplerpc.exception.SimpleRpcException;
 import org.slf4j.Logger;
@@ -36,8 +37,9 @@ public class SimpleLoadBalanceEngineImpl implements LoadBalanceEngine {
 		if (staticServerInfo != null) return staticServerInfo;
 
 		// 2. 调用 ZK 注册中心，获取服务地址列表，基于加权随机法获取一个地址
+		ServerInfo serverInfo = RoundRobinFactory.getRoundRobinEngine().getAvailableServerInfo(serviceName, version, null);
 
-		return null;
+		return serverInfo;
 	}
 
 	//.................//

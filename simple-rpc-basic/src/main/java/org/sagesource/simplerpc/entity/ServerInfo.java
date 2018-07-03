@@ -18,6 +18,8 @@ public class ServerInfo {
 	private String serviceName;
 	// 服务版本号
 	private String serviceVersion;
+	// 服务权重
+	private int    weight;
 
 	/**
 	 * 构建服务端 IP
@@ -63,6 +65,16 @@ public class ServerInfo {
 		return this;
 	}
 
+	/**
+	 * 构建权重
+	 *
+	 * @param weight
+	 * @return
+	 */
+	public ServerInfo buildWeight(int weight) {
+		this.weight = weight;
+		return this;
+	}
 
 	public String getServerIP() {
 		return serverIP;
@@ -78,5 +90,9 @@ public class ServerInfo {
 
 	public String getServiceVersion() {
 		return serviceVersion;
+	}
+
+	public int getWeight() {
+		return weight;
 	}
 }

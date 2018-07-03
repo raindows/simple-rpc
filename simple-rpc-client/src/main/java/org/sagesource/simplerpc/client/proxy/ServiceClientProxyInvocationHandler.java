@@ -4,7 +4,6 @@ import org.apache.commons.pool2.ObjectPool;
 import org.apache.thrift.protocol.TProtocol;
 import org.sagesource.simplerpc.client.pool.ClientProtocolPoolFactory;
 import org.sagesource.simplerpc.entity.ProtocolPoolConfig;
-import org.sagesource.simplerpc.entity.ServerInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +28,6 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 
 	// 连接池配置信息
 	private ProtocolPoolConfig protocolPoolConfig;
-	// 服务端信息
-	private ServerInfo         serverInfo;
 	// 服务名称
 	private String             serviceName;
 	// 服务版本号
