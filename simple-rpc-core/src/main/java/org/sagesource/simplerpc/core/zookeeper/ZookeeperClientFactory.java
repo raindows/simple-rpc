@@ -3,6 +3,7 @@ package org.sagesource.simplerpc.core.zookeeper;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 
@@ -26,7 +27,7 @@ public class ZookeeperClientFactory implements ZKConstants {
 	}
 
 	public static CuratorFramework createClient(String connectionStr, int sessionTimeout, int connectionTimeout) {
-		return createClient(connectionStr, sessionTimeout, connectionTimeout, DEFAULT_CHARSET);
+		return createClient(connectionStr, sessionTimeout, connectionTimeout, DEFAULT_NAMESPACES);
 	}
 
 	public static CuratorFramework createClient(String connectionStr, int sessionTimeout, int connectionTimeout, String namespase) {
@@ -36,6 +37,7 @@ public class ZookeeperClientFactory implements ZKConstants {
 
 	public static CuratorFramework createClient(String connectionStr, int sessionTimeout, int connectionTimeout, String namespase, RetryPolicy retryPolicy) {
 		CuratorFramework client = cacheClientMapper.get(connectionStr);
+
 		if (client == null) {
 			synchronized (ZookeeperClientFactory.class) {
 				client = cacheClientMapper.get(connectionStr);
@@ -44,10 +46,17 @@ public class ZookeeperClientFactory implements ZKConstants {
 					client = builder.connectString(connectionStr).sessionTimeoutMs(sessionTimeout).connectionTimeoutMs(connectionTimeout)
 							.canBeReadOnly(true).namespace(namespase).retryPolicy(retryPolicy).defaultData(null)
 							.build();
+					client.start();
 					cacheClientMapper.putIfAbsent(connectionStr, client);
 				}
 			}
 		}
+
+		// 判断是否启动
+		if (client.getState() == CuratorFrameworkState.LATENT) {
+			client.start();
+		}
+
 		return client;
 	}
 }
