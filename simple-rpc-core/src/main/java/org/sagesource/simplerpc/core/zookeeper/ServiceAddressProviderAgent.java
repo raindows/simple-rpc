@@ -1,4 +1,4 @@
-package org.sagesource.simplerpc.basic.core.zookeeper;
+package org.sagesource.simplerpc.core.zookeeper;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.curator.framework.CuratorFramework;
@@ -8,8 +8,8 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.basic.utils.ConfigValueUtils;
-import org.sagesource.simplerpc.basic.core.loadbalance.LoadBalanceFactory;
-import org.sagesource.simplerpc.basic.core.zookeeper.utils.ZKConstants;
+import org.sagesource.simplerpc.core.loadbalance.LoadBalanceFactory;
+import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +54,12 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 */
 	private final Set<ServerInfo> traceCacheServer = new HashSet<>();
 
+	private PathChildrenCache cachedPath;
+
+	private CuratorFramework zkClient;
+
+	private boolean initFlag = false;
+
 	public ServiceAddressProviderAgent buildServiceName(String serviceName) {
 		this.serviceName = serviceName;
 		return this;
@@ -68,17 +74,20 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 * 初始化
 	 */
 	public void init() {
-		// 获取 zkClient, 通过 env 获取 zk 的连接字符串
-		String zkConnStr = ConfigValueUtils.getEnvPropertyValue(SIMEPLE_RPC_ZK, null);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(">>>>>>>> try create zk client: {} <<<<<<<<", zkConnStr);
+		if (!initFlag) {
+			// 获取 zkClient, 通过 env 获取 zk 的连接字符串
+			String zkConnStr = ConfigValueUtils.getEnvPropertyValue(SIMEPLE_RPC_ZK, null);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(">>>>>>>> try create zk client: {} <<<<<<<<", zkConnStr);
+			}
+
+			this.zkClient = ZookeeperClientFactory.createClient(zkConnStr);
+
+			// 构建服务节点
+			String servicePath = builtServicePath();
+			buildPathChildrenCache(zkClient, servicePath);
+			initFlag = true;
 		}
-
-		CuratorFramework zkClient = ZookeeperClientFactory.createClient(zkConnStr);
-
-		// 构建服务节点
-		String servicePath = builtServicePath();
-		buildPathChildrenCache(zkClient, servicePath);
 	}
 
 	/**
@@ -88,8 +97,8 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 * @param servicePath
 	 */
 	private void buildPathChildrenCache(final CuratorFramework client, String servicePath) {
-		PathChildrenCache cachedPath = new PathChildrenCache(client, servicePath, true);
-		cachedPath.getListenable().addListener(new PathChildrenCacheListener() {
+		this.cachedPath = new PathChildrenCache(client, servicePath, true);
+		this.cachedPath.getListenable().addListener(new PathChildrenCacheListener() {
 			@Override
 			public void childEvent(CuratorFramework curatorFramework, PathChildrenCacheEvent pathChildrenCacheEvent) throws Exception {
 				// 节点事件
@@ -149,13 +158,15 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 *
 	 * @return
 	 */
-	public ServerInfo findServerAddressList() {
+	public ServerInfo findServiceServerInfo() {
 		if (this.serverInfoList == null || this.serverInfoList.isEmpty()) {
-
+			List<ServerInfo> traceCacheList = new ArrayList<>(this.traceCacheServer);
+			return LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, traceCacheList);
 		}
 
 		ServerInfo serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, this.serverInfoList);
-		traceCacheServer.add(serverInfo);
+		if (serverInfo != null)
+			traceCacheServer.add(serverInfo);
 		return serverInfo;
 	}
 
@@ -179,4 +190,22 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 		System.out.println(JSON.toJSONString(serverInfo));
 	}
 
+	/**
+	 * 关闭
+	 */
+	public void close() {
+		try {
+			cachedPath.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public String getVersion() {
+		return version;
+	}
 }

@@ -1,6 +1,6 @@
-package org.sagesource.simplerpc.basic.spring.client;
+package org.sagesource.simplerpc.spring.client;
 
-import org.sagesource.simplerpc.basic.client.proxy.ServiceClientProxy;
+import org.sagesource.simplerpc.client.proxy.ServiceClientProxy;
 import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;

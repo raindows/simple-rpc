@@ -1,11 +1,12 @@
-package org.sagesource.simplerpc.basic.client.pool;
+package org.sagesource.simplerpc.client.pool;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.thrift.protocol.TProtocol;
-import org.sagesource.simplerpc.basic.core.protocol.TProtocolPooledFactory;
 import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
+import org.sagesource.simplerpc.core.protocol.TProtocolPooledFactory;
+import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +42,14 @@ public class ClientProtocolPoolFactory {
 	/**
 	 * 获取 初始化服务连接池
 	 *
-	 * @param serviceName
-	 * @param version
+	 * @param poolConfig
+	 * @param serviceAddressProviderAgent
 	 * @return
 	 */
-	public ObjectPool<TProtocol> createOrObtain(ProtocolPoolConfig poolConfig, String serviceName, String version) {
+	public ObjectPool<TProtocol> createOrObtain(ProtocolPoolConfig poolConfig, ServiceAddressProviderAgent serviceAddressProviderAgent) {
+		String serviceName = serviceAddressProviderAgent.getServiceName();
+		String version     = serviceAddressProviderAgent.getVersion();
+
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Create Client Protocol Pool. PoolConfig=[{}],ServiceName=[{}],Version=[{}]",
 					ReflectionToStringBuilder.toString(poolConfig), serviceName, version);
@@ -63,8 +67,8 @@ public class ClientProtocolPoolFactory {
 							new TProtocolPooledFactory()
 									.buildKeepAlive(poolConfig.getKeepAlive())
 									.buildTimeout(poolConfig.getTimeout())
-									.buildServiceName(serviceName)
-									.buildVersion(version), poolConfig);
+									.buildServiceAddressProviderAgent(serviceAddressProviderAgent));
+
 					cachePoolMapper.put(serviceName, pool);
 					return pool;
 				}

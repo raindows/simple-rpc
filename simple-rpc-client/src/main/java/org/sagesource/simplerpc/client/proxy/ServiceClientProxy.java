@@ -1,4 +1,4 @@
-package org.sagesource.simplerpc.basic.client.proxy;
+package org.sagesource.simplerpc.client.proxy;
 
 import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
 import org.slf4j.Logger;

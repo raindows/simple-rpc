@@ -1,6 +1,6 @@
-package org.sagesource.simplerpc.basic.core.loadbalance.impl;
+package org.sagesource.simplerpc.core.loadbalance.impl;
 
-import org.sagesource.simplerpc.basic.core.loadbalance.RoundRobinEngine;
+import org.sagesource.simplerpc.core.loadbalance.RoundRobinEngine;
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

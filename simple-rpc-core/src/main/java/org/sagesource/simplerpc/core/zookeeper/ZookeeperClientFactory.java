@@ -1,11 +1,11 @@
-package org.sagesource.simplerpc.basic.core.zookeeper;
+package org.sagesource.simplerpc.core.zookeeper;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.sagesource.simplerpc.basic.core.zookeeper.utils.ZKConstants;
+import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 
 import java.util.concurrent.ConcurrentHashMap;
 

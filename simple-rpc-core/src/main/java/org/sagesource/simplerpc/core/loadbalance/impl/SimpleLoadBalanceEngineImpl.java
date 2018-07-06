@@ -1,13 +1,13 @@
-package org.sagesource.simplerpc.basic.core.loadbalance.impl;
+package org.sagesource.simplerpc.core.loadbalance.impl;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
-import org.sagesource.simplerpc.basic.core.loadbalance.LoadBalanceEngine;
-import org.sagesource.simplerpc.basic.core.zookeeper.utils.ZKConstants;
+import org.sagesource.simplerpc.core.loadbalance.LoadBalanceEngine;
+import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
 import org.sagesource.simplerpc.basic.utils.ConfigValueUtils;
-import org.sagesource.simplerpc.basic.core.loadbalance.RoundRobinFactory;
+import org.sagesource.simplerpc.core.loadbalance.RoundRobinFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

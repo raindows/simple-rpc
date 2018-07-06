@@ -1,4 +1,4 @@
-package org.sagesource.simplerpc.basic.core.zookeeper.utils;
+package org.sagesource.simplerpc.core.zookeeper.utils;
 
 /**
  * <p>ZK 常量配置</p>

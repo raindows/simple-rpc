@@ -1,6 +1,6 @@
-package org.sagesource.simplerpc.basic.core.loadbalance;
+package org.sagesource.simplerpc.core.loadbalance;
 
-import org.sagesource.simplerpc.basic.core.loadbalance.impl.SimpleLoadBalanceEngineImpl;
+import org.sagesource.simplerpc.core.loadbalance.impl.SimpleLoadBalanceEngineImpl;
 
 /**
  * <p></p>

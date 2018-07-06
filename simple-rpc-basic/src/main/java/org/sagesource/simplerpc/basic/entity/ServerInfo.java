@@ -76,6 +76,23 @@ public class ServerInfo {
 		return this;
 	}
 
+	@Override
+	public int hashCode() {
+		return 1;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		ServerInfo serverInfo = (ServerInfo) obj;
+
+		if (serverInfo.serviceVersion.equals(this.serviceVersion)
+				&& serverInfo.serviceName.equals(this.serviceName)
+				&& serverInfo.serverIP.equals(this.serverIP)
+				&& serverInfo.port == this.port)
+			return true;
+		return false;
+	}
+
 	public String getServerIP() {
 		return serverIP;
 	}
@@ -95,4 +112,5 @@ public class ServerInfo {
 	public int getWeight() {
 		return weight;
 	}
+
 }

@@ -1,9 +1,10 @@
-package org.sagesource.simplerpc.basic.client.proxy;
+package org.sagesource.simplerpc.client.proxy;
 
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.thrift.protocol.TProtocol;
-import org.sagesource.simplerpc.basic.client.pool.ClientProtocolPoolFactory;
 import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
+import org.sagesource.simplerpc.client.pool.ClientProtocolPoolFactory;
+import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +27,18 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	// 客户端接口名称后缀
 	private static final String SERVICE_ICLIENT_NAME = "$Client";
 
+	// 服务地址获取代理
+	private ServiceAddressProviderAgent serviceAddressProviderAgent;
 	// 连接池配置信息
-	private ProtocolPoolConfig protocolPoolConfig;
+	private ProtocolPoolConfig          protocolPoolConfig;
 	// 服务名称
-	private String             serviceName;
+	private String                      serviceName;
 	// 服务版本号
-	private String             version;
+	private String                      version;
+
+	public ServiceClientProxyInvocationHandler() {
+		this.serviceAddressProviderAgent = new ServiceAddressProviderAgent();
+	}
 
 	/**
 	 * 设置连接池配置信息
@@ -52,6 +59,7 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	 */
 	public ServiceClientProxyInvocationHandler buildServiceName(String serviceName) {
 		this.serviceName = serviceName;
+		serviceAddressProviderAgent.buildServiceName(serviceName);
 		return this;
 	}
 
@@ -63,18 +71,21 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	 */
 	public ServiceClientProxyInvocationHandler buildVersion(String version) {
 		this.version = version;
+		serviceAddressProviderAgent.buildVersion(version);
 		return this;
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		this.serviceAddressProviderAgent.init();
+
 		// 从连接池中获取连接
 		TProtocol             protocol           = null;
 		Object                result             = null;
 		ObjectPool<TProtocol> clientProtocolPool = null;
 		try {
 			// 获取线程池
-			clientProtocolPool = ClientProtocolPoolFactory.getInstance().createOrObtain(this.protocolPoolConfig, this.serviceName, this.version);
+			clientProtocolPool = ClientProtocolPoolFactory.getInstance().createOrObtain(this.protocolPoolConfig, this.serviceAddressProviderAgent);
 			protocol = clientProtocolPool.borrowObject();
 
 			// 创建客户端对象

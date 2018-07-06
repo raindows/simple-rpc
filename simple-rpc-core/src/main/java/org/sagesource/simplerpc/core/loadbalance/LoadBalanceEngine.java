@@ -1,4 +1,4 @@
-package org.sagesource.simplerpc.basic.core.loadbalance;
+package org.sagesource.simplerpc.core.loadbalance;
 
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcException;

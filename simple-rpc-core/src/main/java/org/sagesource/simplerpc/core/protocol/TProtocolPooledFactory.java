@@ -1,4 +1,4 @@
-package org.sagesource.simplerpc.basic.core.protocol;
+package org.sagesource.simplerpc.core.protocol;
 
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
@@ -10,7 +10,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
-import org.sagesource.simplerpc.basic.core.loadbalance.LoadBalanceFactory;
+import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,34 +29,19 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 
 	private static final int MAX_LENGTH = 1638400000; // 单次最大传输的数据量（1.6G）
 
-	// 服务名称
 	private String serviceName;
-	// 服务版本号
 	private String version;
 	// 超时时间
 	private int     timeout   = 3000000;
 	// 保持长连接
 	private boolean keepAlive = true;
+	// 服务地址获取代理
+	private ServiceAddressProviderAgent serviceAddressProviderAgent;
 
-	/**
-	 * 设置服务名称
-	 *
-	 * @param serviceName
-	 * @return
-	 */
-	public TProtocolPooledFactory buildServiceName(String serviceName) {
-		this.serviceName = serviceName;
-		return this;
-	}
-
-	/**
-	 * 设置服务版本号
-	 *
-	 * @param version
-	 * @return
-	 */
-	public TProtocolPooledFactory buildVersion(String version) {
-		this.version = version;
+	public TProtocolPooledFactory buildServiceAddressProviderAgent(ServiceAddressProviderAgent serviceAddressProviderAgent) {
+		this.serviceAddressProviderAgent = serviceAddressProviderAgent;
+		this.serviceName = serviceAddressProviderAgent.getServiceName();
+		this.version = serviceAddressProviderAgent.getVersion();
 		return this;
 	}
 
@@ -94,7 +79,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 			LOGGER.debug("Create TProtocol Pool Bean. ServiceName=" + this.serviceName + " Version=" + this.version);
 
 		// 通过 LoadBalance 获取服务连接
-		ServerInfo serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version);
+		ServerInfo serverInfo = this.serviceAddressProviderAgent.findServiceServerInfo();
 		if (serverInfo == null) {
 			throw new SimpleRpcException(MessageFormat.format("SERVICE:[{0}]:VERSION:[{1}] ADDRESS NOT FOUND.",
 					this.serviceName, this.version));
