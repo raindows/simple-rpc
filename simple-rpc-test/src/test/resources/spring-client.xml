@@ -7,6 +7,13 @@
     <bean id="helloWorldService" class="org.sagesource.simplerpc.spring.client.ServiceClientFactoryBean">
         <property name="interfaceType" value="org.sagesource.test.api.HelloWorldService.Iface"/>
         <property name="serviceVersion" value="1.0.0"/>
+        <property name="protocolPoolConfig">
+            <bean class="org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig">
+                <property name="maxIdle" value="50"/>
+                <property name="minIdle" value="1"/>
+                <property name="maxTotal" value="50"/>
+            </bean>
+        </property>
     </bean>
 
 </beans>

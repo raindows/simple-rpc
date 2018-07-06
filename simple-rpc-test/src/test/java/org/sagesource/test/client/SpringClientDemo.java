@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.concurrent.CyclicBarrier;
+
 /**
  * <p></p>
  * <pre>
@@ -28,6 +30,30 @@ public class SpringClientDemo {
 	@Test
 	public void test() throws TException {
 		/*System.setProperty("SIMPLERPC_STATIC_ROUTER", "*=127.0.0.1:8090");*/
-		System.out.println(helloWorldService.sayHello("sage"));
+		CyclicBarrier cyclicBarrier = new CyclicBarrier(20);
+		for (int i = 0; i < 50; i++) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						//cyclicBarrier.await();
+						System.out.println(helloWorldService.sayHello("sage"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+
+		while(true);
+	}
+
+	static class ThreadA implements Runnable {
+
+
+		@Override
+		public void run() {
+
+		}
 	}
 }
