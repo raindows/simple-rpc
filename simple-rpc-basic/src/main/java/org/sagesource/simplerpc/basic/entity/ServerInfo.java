@@ -113,4 +113,23 @@ public class ServerInfo {
 		return weight;
 	}
 
+	public void setServerIP(String serverIP) {
+		this.serverIP = serverIP;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+
+	public void setServiceVersion(String serviceVersion) {
+		this.serviceVersion = serviceVersion;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
 }
