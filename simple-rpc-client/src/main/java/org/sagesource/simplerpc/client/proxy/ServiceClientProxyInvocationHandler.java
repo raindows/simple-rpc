@@ -36,48 +36,15 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	// 服务版本号
 	private String                      version;
 
-	public ServiceClientProxyInvocationHandler() {
-		this.serviceAddressProviderAgent = new ServiceAddressProviderAgent();
-	}
-
-	/**
-	 * 设置连接池配置信息
-	 *
-	 * @param protocolPoolConfig
-	 * @return
-	 */
-	public ServiceClientProxyInvocationHandler buildProtocolPoolConfig(ProtocolPoolConfig protocolPoolConfig) {
+	public ServiceClientProxyInvocationHandler(String serviceName, String version, ProtocolPoolConfig protocolPoolConfig) throws Exception {
 		this.protocolPoolConfig = protocolPoolConfig;
-		return this;
-	}
-
-	/**
-	 * 设置服务名称
-	 *
-	 * @param serviceName
-	 * @return
-	 */
-	public ServiceClientProxyInvocationHandler buildServiceName(String serviceName) {
 		this.serviceName = serviceName;
-		serviceAddressProviderAgent.buildServiceName(serviceName);
-		return this;
-	}
-
-	/**
-	 * 设置版本号
-	 *
-	 * @param version
-	 * @return
-	 */
-	public ServiceClientProxyInvocationHandler buildVersion(String version) {
 		this.version = version;
-		serviceAddressProviderAgent.buildVersion(version);
-		return this;
+		this.serviceAddressProviderAgent = new ServiceAddressProviderAgent(serviceName, version);
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		this.serviceAddressProviderAgent.init();
 
 		// 从连接池中获取连接
 		TProtocol             protocol           = null;

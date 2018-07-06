@@ -6,6 +6,8 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </pre>
  */
 public class ZookeeperClientFactory implements ZKConstants {
+	private static Logger LOGGER = LoggerFactory.getLogger(ZookeeperClientFactory.class);
 
 	// 连接客户端缓存 key - connStr
 	private static final ConcurrentHashMap<String, CuratorFramework> cacheClientMapper = new ConcurrentHashMap<>();
@@ -42,10 +45,13 @@ public class ZookeeperClientFactory implements ZKConstants {
 			synchronized (ZookeeperClientFactory.class) {
 				client = cacheClientMapper.get(connectionStr);
 				if (client == null) {
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug(">>>>>>>> try create zk client: {} <<<<<<<<", connectionStr);
+					}
+
 					CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
 					client = builder.connectString(connectionStr).sessionTimeoutMs(sessionTimeout).connectionTimeoutMs(connectionTimeout)
-							.canBeReadOnly(true).namespace(namespase).retryPolicy(retryPolicy).defaultData(null)
-							.build();
+							.canBeReadOnly(true).namespace(namespase).retryPolicy(retryPolicy).build();
 					client.start();
 					cacheClientMapper.putIfAbsent(connectionStr, client);
 				}

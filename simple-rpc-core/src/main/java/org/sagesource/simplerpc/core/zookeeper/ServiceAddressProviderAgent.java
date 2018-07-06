@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * <p>服务地址Agent</p>
@@ -28,6 +29,8 @@ import java.util.Set;
  */
 public class ServiceAddressProviderAgent implements ZKConstants {
 	private static Logger LOGGER = LoggerFactory.getLogger(ServiceAddressProviderAgent.class);
+
+	private CountDownLatch countDownLatch = new CountDownLatch(1);
 
 	/**
 	 * 服务名称
@@ -60,34 +63,26 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 
 	private boolean initFlag = false;
 
-	public ServiceAddressProviderAgent buildServiceName(String serviceName) {
+	public ServiceAddressProviderAgent(String serviceName, String version) throws Exception {
 		this.serviceName = serviceName;
-		return this;
-	}
-
-	public ServiceAddressProviderAgent buildVersion(String version) {
 		this.version = version;
-		return this;
+		init();
 	}
 
 	/**
 	 * 初始化
 	 */
-	public void init() {
-		if (!initFlag) {
-			// 获取 zkClient, 通过 env 获取 zk 的连接字符串
-			String zkConnStr = ConfigValueUtils.getEnvPropertyValue(SIMEPLE_RPC_ZK, null);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(">>>>>>>> try create zk client: {} <<<<<<<<", zkConnStr);
-			}
+	public void init() throws Exception {
+		// 获取 zkClient, 通过 env 获取 zk 的连接字符串
+		String zkConnStr = ConfigValueUtils.getEnvPropertyValue(SIMEPLE_RPC_ZK, null);
+		this.zkClient = ZookeeperClientFactory.createClient(zkConnStr);
 
-			this.zkClient = ZookeeperClientFactory.createClient(zkConnStr);
+		// 构建服务节点
+		String servicePath = builtServicePath();
+		buildPathChildrenCache(zkClient, servicePath);
+		// 需要等待第一次childEvent完成，初始化才可以结束
+		countDownLatch.await();
 
-			// 构建服务节点
-			String servicePath = builtServicePath();
-			buildPathChildrenCache(zkClient, servicePath);
-			initFlag = true;
-		}
 	}
 
 	/**
@@ -96,8 +91,15 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 * @param client
 	 * @param servicePath
 	 */
-	private void buildPathChildrenCache(final CuratorFramework client, String servicePath) {
+	private void buildPathChildrenCache(final CuratorFramework client, String servicePath) throws Exception {
 		this.cachedPath = new PathChildrenCache(client, servicePath, true);
+		try {
+			this.cachedPath.start();
+		} catch (Exception e) {
+			if (!"already started".equals(e.getMessage())) {
+				throw e;
+			}
+		}
 		this.cachedPath.getListenable().addListener(new PathChildrenCacheListener() {
 			@Override
 			public void childEvent(CuratorFramework curatorFramework, PathChildrenCacheEvent pathChildrenCacheEvent) throws Exception {
@@ -112,20 +114,20 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 						break;
 					case CONNECTION_LOST:
 						LOGGER.warn(">>>>>>>> connection lost, waiting.... <<<<<<<<");
-						break;
+						return;
 					case INITIALIZED:
 						LOGGER.warn(">>>>>>>> connection init.... <<<<<<<<");
-						break;
 					default:
 				}
 
 				// 当任何节点的事件变动，简单处理，rebuild并清空serverInfoList
 				cachedPath.rebuild();
 				rebuild();
+				countDownLatch.countDown();
 			}
 
 			// rebuild
-			protected void rebuild() throws Exception {
+			protected void rebuild() {
 				List<ChildData> childDataList = cachedPath.getCurrentData();
 				if (childDataList == null || childDataList.isEmpty()) {
 					// service 节点下没有机器数据，可能是服务端和 zk 的连接断开而已
@@ -135,10 +137,6 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 				// 获取新的机器列表
 				List<ServerInfo> currentServerInfoList = new ArrayList<>();
 				for (ChildData childData : childDataList) {
-					String nodePath = childData.getPath();
-					if (LOGGER.isDebugEnabled())
-						LOGGER.debug(">>>>>>>> serviceName:{} version:{} path:{} <<<<<<<<", serviceName, version, nodePath);
-
 					// 获取节点值
 					String     nodePathVal = new String(childData.getData());
 					ServerInfo serverInfo  = JSON.parseObject(nodePathVal, ServerInfo.class);
@@ -159,14 +157,18 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 * @return
 	 */
 	public ServerInfo findServiceServerInfo() {
+		ServerInfo serverInfo = null;
 		if (this.serverInfoList == null || this.serverInfoList.isEmpty()) {
 			List<ServerInfo> traceCacheList = new ArrayList<>(this.traceCacheServer);
-			return LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, traceCacheList);
+			serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, traceCacheList);
+		} else {
+			serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, this.serverInfoList);
+			if (serverInfo != null)
+				traceCacheServer.add(serverInfo);
 		}
 
-		ServerInfo serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, this.serverInfoList);
-		if (serverInfo != null)
-			traceCacheServer.add(serverInfo);
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug(">>>>>>>> serviceName:{},version:{},serverInfo:{} <<<<<<<<", this.serviceName, this.version, JSON.toJSONString(serverInfo));
 		return serverInfo;
 	}
 
@@ -177,17 +179,6 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 */
 	private String builtServicePath() {
 		return "/" + this.serviceName + "/" + this.version;
-	}
-
-	public static void main(String[] args) {
-		ServerInfo serverInfo = new ServerInfo()
-				.buildServiceName("org.sagesource.test.api.HelloWorldService")
-				.buildServiceVersion("1.0.0")
-				.buildServerIP("127.0.0.1")
-				.buildPort(8090)
-				.buildWeight(1);
-
-		System.out.println(JSON.toJSONString(serverInfo));
 	}
 
 	/**

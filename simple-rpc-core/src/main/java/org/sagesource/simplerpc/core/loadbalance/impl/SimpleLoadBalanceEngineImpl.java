@@ -32,14 +32,13 @@ public class SimpleLoadBalanceEngineImpl implements LoadBalanceEngine, ZKConstan
 	@Override
 	public ServerInfo availableServerInfo(String serviceName, String version, List<ServerInfo> serverListInfo) throws SimpleRpcException {
 		// 1. 检查静态路由配置，如果存在静态路由，直接解析返回
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Simple Loadbalance Try Find Server Info From Static Router Config. ServiceName=" + serviceName + " Version=" + version);
-		}
+		LOGGER.debug("Simple Loadbalance Try Find Server Info From Static Router Config. ServiceName=" + serviceName + " Version=" + version);
+
 		ServerInfo staticServerInfo = queryStaticRouterConfig(serviceName, version);
 		if (staticServerInfo != null) return staticServerInfo;
 
 		// 2. 调用 ZK 注册中心，获取服务地址列表，基于加权随机法获取一个地址
-		ServerInfo serverInfo = RoundRobinFactory.getRoundRobinEngine().getAvailableServerInfo(serviceName, version, null);
+		ServerInfo serverInfo = RoundRobinFactory.getRoundRobinEngine().getAvailableServerInfo(serviceName, version, serverListInfo);
 
 		return serverInfo;
 	}

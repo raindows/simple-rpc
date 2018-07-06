@@ -46,10 +46,7 @@ public class ServiceClientProxy {
 		}
 
 		// 基于 JDK 动态代理获取 Client
-		ServiceClientProxyInvocationHandler proxyInvocationHandler = new ServiceClientProxyInvocationHandler()
-				.buildProtocolPoolConfig(protocolPoolConfig)
-				.buildServiceName(serviceName)
-				.buildVersion(version);
+		ServiceClientProxyInvocationHandler proxyInvocationHandler = new ServiceClientProxyInvocationHandler(serviceName, version, protocolPoolConfig);
 
 		T client = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, proxyInvocationHandler);
 		if (client != null) {
