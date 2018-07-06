@@ -31,7 +31,7 @@ public class SpringClientDemo {
 	public void test() throws TException {
 		/*System.setProperty("SIMPLERPC_STATIC_ROUTER", "*=127.0.0.1:8090");*/
 		CyclicBarrier cyclicBarrier = new CyclicBarrier(20);
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 1; i++) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {

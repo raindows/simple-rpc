@@ -3,6 +3,7 @@ package org.sagesource.simplerpc.client.proxy;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.thrift.protocol.TProtocol;
 import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
+import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
 import org.sagesource.simplerpc.client.pool.ClientProtocolPoolFactory;
 import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.slf4j.Logger;
@@ -11,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.text.MessageFormat;
 
 /**
  * <p>Client 动态代理 Handler</p>
@@ -67,13 +70,17 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 				// 动态代理执行阶段异常
 				InvocationTargetException ex = (InvocationTargetException) e;
 				if (ex.getTargetException().getCause() instanceof SocketTimeoutException) {
-					// 对于连接超时的请求，在返回数据源的时候，需要关闭连接，避免连接被其他请求复用，获取到错误的结果
+					// 对于请求超时，在返回数据源的时候，需要关闭连接，避免连接被其他请求复用，获取到错误的结果
 					protocol.getTransport().flush();
 					protocol.getTransport().close();
-					// FIXME 超时异常需要包装抛出
+					throw new SimpleRpcException(MessageFormat.format("CALL SERVICE:[{0}] VERSION:[{1}] TIMEOUT", this.serviceName, this.version));
+				} else if (ex.getTargetException().getCause() instanceof SocketException) {
+					// 连接超时，将该对象从线程池中移除
+					clientProtocolPool.invalidateObject(protocol);
+					protocol = null;
+					throw new SimpleRpcException(MessageFormat.format("CALL SERVICE:[{0}] VERSION:[{1}] Connection Error", this.serviceName, this.version));
 				}
 			}
-			// todo: 未来异常需要分组并上传到监控
 			throw e;
 		} finally {
 			if (clientProtocolPool != null && protocol != null) {

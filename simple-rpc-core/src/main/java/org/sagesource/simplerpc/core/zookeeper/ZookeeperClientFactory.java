@@ -9,6 +9,8 @@ import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -64,5 +66,15 @@ public class ZookeeperClientFactory implements ZKConstants {
 		}
 
 		return client;
+	}
+
+	/**
+	 * 关闭方法
+	 */
+	public static void close() {
+		for (Iterator<Map.Entry<String, CuratorFramework>> it = cacheClientMapper.entrySet().iterator(); it.hasNext(); ) {
+			it.next().getValue().close();
+			it.remove();
+		}
 	}
 }

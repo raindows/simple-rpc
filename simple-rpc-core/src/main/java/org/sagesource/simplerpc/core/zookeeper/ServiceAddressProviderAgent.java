@@ -120,7 +120,7 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 					default:
 				}
 
-				// 当任何节点的事件变动，简单处理，rebuild并清空serverInfoList
+				// 当任何节点的事件变动，简单处理，rebuild并清空 serverInfoList
 				cachedPath.rebuild();
 				rebuild();
 				countDownLatch.countDown();
@@ -158,7 +158,7 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 */
 	public ServerInfo findServiceServerInfo() {
 		ServerInfo serverInfo = null;
-		if (this.serverInfoList == null || this.serverInfoList.isEmpty()) {
+		if ((this.serverInfoList == null || this.serverInfoList.isEmpty()) && !traceCacheServer.isEmpty()) {
 			List<ServerInfo> traceCacheList = new ArrayList<>(this.traceCacheServer);
 			serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, traceCacheList);
 		} else {

@@ -2,6 +2,7 @@ package org.sagesource.simplerpc.core.protocol;
 
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.PooledObjectState;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -148,9 +149,9 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 	@Override
 	public void destroyObject(PooledObject<TProtocol> p) throws Exception {
 		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Destroy TProtocol Pool Bean. ServiceName=" + this.serviceName + " Version=" + this.version);
+			LOGGER.debug("Destroy TProtocol Pool Bean. ServiceName=" + this.serviceName + " Version=" + this.version + " Object Status=" + p.getState());
 
-		if (p.getObject() != null && p.getObject().getTransport().isOpen()) {
+		if (!PooledObjectState.INVALID.equals(p.getState()) && p.getObject() != null && p.getObject().getTransport().isOpen()) {
 			p.getObject().getTransport().flush();
 			p.getObject().getTransport().close();
 		}
