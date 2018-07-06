@@ -1,9 +1,9 @@
 package org.sagesource.test.loadbalance;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.sagesource.simplerpc.core.loadbalance.LoadBalanceEngine;
-import org.sagesource.simplerpc.core.loadbalance.impl.SimpleLoadBalanceEngineImpl;
-import org.sagesource.simplerpc.entity.ServerInfo;
+import org.sagesource.simplerpc.basic.core.loadbalance.LoadBalanceEngine;
+import org.sagesource.simplerpc.basic.core.loadbalance.impl.SimpleLoadBalanceEngineImpl;
+import org.sagesource.simplerpc.basic.entity.ServerInfo;
 
 /**
  * <p></p>

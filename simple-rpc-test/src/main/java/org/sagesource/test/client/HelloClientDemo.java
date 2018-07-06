@@ -1,7 +1,7 @@
 package org.sagesource.test.client;
 
-import org.sagesource.simplerpc.client.proxy.ServiceClientProxy;
-import org.sagesource.simplerpc.entity.ProtocolPoolConfig;
+import org.sagesource.simplerpc.basic.client.proxy.ServiceClientProxy;
+import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
 import org.sagesource.test.api.HelloWorldService;
 
 import java.util.concurrent.CyclicBarrier;
