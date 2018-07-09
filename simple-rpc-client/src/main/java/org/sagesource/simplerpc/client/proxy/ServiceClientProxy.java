@@ -19,7 +19,7 @@ public class ServiceClientProxy {
 	private static Logger LOGGER = LoggerFactory.getLogger(ServiceClientProxy.class);
 
 	/**
-	 * 同步客户端缓存对象
+	 * 同步客户端缓存对象 key:serviceName:version
 	 */
 	private static final ConcurrentHashMap<String, Object> cacheClientMapper  = new ConcurrentHashMap<>();
 	// 服务父类接口名称
@@ -40,8 +40,12 @@ public class ServiceClientProxy {
 		// 服务名称
 		String serviceName = serviceClassName.substring(0, serviceClassName.lastIndexOf(SERVICE_IFACE_NAME));
 		// 从缓存中获取客户端
-		Object cacheClient = cacheClientMapper.get(serviceName);
+		String clientCacheKey = serviceName + ":" + version;
+		Object cacheClient    = cacheClientMapper.get(clientCacheKey);
 		if (cacheClient != null) {
+			if (LOGGER.isDebugEnabled())
+				LOGGER.debug("get serviceName:{} version:{} proxy client form cache", serviceName, version);
+
 			return (T) cacheClient;
 		}
 
@@ -51,7 +55,7 @@ public class ServiceClientProxy {
 		T client = (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, proxyInvocationHandler);
 		if (client != null) {
 			// 写入客户端缓存
-			cacheClientMapper.putIfAbsent(serviceName, client);
+			cacheClientMapper.putIfAbsent(clientCacheKey, client);
 		}
 		return client;
 	}

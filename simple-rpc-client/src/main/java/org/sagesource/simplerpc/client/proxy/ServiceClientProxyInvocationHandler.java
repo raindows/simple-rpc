@@ -40,6 +40,9 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	private String                      version;
 
 	public ServiceClientProxyInvocationHandler(String serviceName, String version, ProtocolPoolConfig protocolPoolConfig) throws Exception {
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("create proxy client serviceName:{} version:{} protocolPoolConfig:{}", serviceName, version, protocolPoolConfig);
+
 		this.protocolPoolConfig = protocolPoolConfig;
 		this.serviceName = serviceName;
 		this.version = version;
@@ -48,6 +51,8 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("proxy invocation serviceName:{} version:{} args:{}", this.serviceName, this.version, args);
 
 		// 从连接池中获取连接
 		TProtocol             protocol           = null;

@@ -10,6 +10,7 @@ import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -74,6 +75,16 @@ public class ClientProtocolPoolFactory {
 				}
 				return cachePool;
 			}
+		}
+	}
+
+	/**
+	 * 关闭方法
+	 */
+	public synchronized static void close() throws Exception {
+		for (Map.Entry<String, ObjectPool<TProtocol>> stringObjectPoolEntry : cachePoolMapper.entrySet()) {
+			stringObjectPoolEntry.getValue().close();
+			stringObjectPoolEntry.getValue().clear();
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package org.sagesource.simplerpc.basic.entity;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 /**
@@ -30,5 +31,10 @@ public class ProtocolPoolConfig extends GenericObjectPoolConfig {
 
 	public void setKeepAlive(boolean keepAlive) {
 		this.keepAlive = keepAlive;
+	}
+
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
 	}
 }

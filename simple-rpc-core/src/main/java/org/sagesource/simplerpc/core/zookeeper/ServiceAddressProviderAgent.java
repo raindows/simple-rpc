@@ -7,12 +7,14 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
+import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
 import org.sagesource.simplerpc.basic.utils.ConfigValueUtils;
 import org.sagesource.simplerpc.core.loadbalance.LoadBalanceFactory;
 import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.concurrent.CountDownLatch;
 public class ServiceAddressProviderAgent implements ZKConstants {
 	private static Logger LOGGER = LoggerFactory.getLogger(ServiceAddressProviderAgent.class);
 
+	// 初始化计数器 当ServiceAddressProviderAgent构造的时候，需要等到childEvent执行完成后，在执行后面的初始化操作
 	private CountDownLatch countDownLatch = new CountDownLatch(1);
 
 	/**
@@ -42,11 +45,6 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 * 服务版本号
 	 */
 	private String version;
-
-	/**
-	 * 锁对象 因为每一个服务是生成同一个动态代理 所以不需要 static 的锁对象
-	 */
-	private Object LOCK_OBJ = new Object();
 
 	/**
 	 * 服务提供方信息
@@ -62,7 +60,7 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 
 	private CuratorFramework zkClient;
 
-	private boolean initFlag = false;
+	private static final List<PathChildrenCache> PATH_CHILDREN_CACHES = new CopyOnWriteArrayList<>();
 
 	public ServiceAddressProviderAgent(String serviceName, String version) throws Exception {
 		this.serviceName = serviceName;
@@ -83,7 +81,8 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 		buildPathChildrenCache(zkClient, servicePath);
 		// 需要等待第一次childEvent完成，初始化才可以结束
 		countDownLatch.await();
-
+		// 将监听的节点缓存，便于 close 操作
+		PATH_CHILDREN_CACHES.add(this.cachedPath);
 	}
 
 	/**
@@ -160,10 +159,12 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 		if ((this.serverInfoList == null || this.serverInfoList.isEmpty()) && !traceCacheServer.isEmpty()) {
 			List<ServerInfo> traceCacheList = new ArrayList<>(this.traceCacheServer);
 			serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, traceCacheList);
-		} else {
+		} else if (!serverInfoList.isEmpty()) {
 			serverInfo = LoadBalanceFactory.getLoadBalanceEngine().availableServerInfo(this.serviceName, this.version, this.serverInfoList);
 			if (serverInfo != null)
 				traceCacheServer.add(serverInfo);
+		} else {
+			throw new SimpleRpcException(MessageFormat.format("SERVICE:[{0}] VERSION:[{0}] Unavailable", this.serviceName, this.version));
 		}
 
 		if (LOGGER.isDebugEnabled())
@@ -183,11 +184,16 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	/**
 	 * 关闭
 	 */
-	public void close() {
-		try {
-			cachedPath.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+	public static synchronized void close() {
+		for (PathChildrenCache pathChildrenCach : PATH_CHILDREN_CACHES) {
+			try {
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("close zk pathChildrenCach:{}", pathChildrenCach);
+
+				pathChildrenCach.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
