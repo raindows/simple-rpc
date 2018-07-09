@@ -1,4 +1,5 @@
 ### simple-rpc
+    Simple-Rpc是基于 Thrift 实现的 RPC 框架。因为在
 ---
 #### 模块介绍
 ##### simple-rpc-basic
@@ -34,5 +35,9 @@
 7. 服务版本支持
 8. 异步调用
 9. Codegen 代码生成工具
-10. Spring Support
-11. 本地 mock
+10. 本地 mock
+11. trace_id支持 
+    重写 Protocol
+    基于 Log4J MDC 实现日志 trace 输出
+
+https://blog.csdn.net/zhu_tianwei/article/details/44115667

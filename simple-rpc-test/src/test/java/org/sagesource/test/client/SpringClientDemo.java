@@ -3,12 +3,9 @@ package org.sagesource.test.client;
 import org.apache.thrift.TException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sagesource.simplerpc.client.pool.ClientProtocolPoolFactory;
-import org.sagesource.simplerpc.core.protocol.TProtocolPooledFactory;
-import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
-import org.sagesource.simplerpc.core.zookeeper.ZookeeperClientFactory;
+import org.sagesource.simplerpc.core.trace.ThreadTrace;
+import org.sagesource.simplerpc.core.trace.TraceFun;
 import org.sagesource.test.api.HelloWorldService;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,12 +29,12 @@ public class SpringClientDemo {
 
 	@Test
 	public void test() throws Exception {
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 1; i++) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						MDC.put("traceId", String.valueOf(System.currentTimeMillis()));
+						ThreadTrace.set(TraceFun.getTrace());
 						System.out.println(helloWorldService.sayHello("sage"));
 					} catch (TException e) {
 						e.printStackTrace();
@@ -45,9 +42,15 @@ public class SpringClientDemo {
 				}
 			}).start();
 		}
-		while (true);
+		while (true) ;
 		/*ClientProtocolPoolFactory.close();
 		ServiceAddressProviderAgent.close();
 		ZookeeperClientFactory.close();*/
+	}
+
+	@Test
+	public void test2() throws TException {
+		ThreadTrace.set(TraceFun.getTrace());
+		System.out.println(helloWorldService.sayHello("sage"));
 	}
 }

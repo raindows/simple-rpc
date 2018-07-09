@@ -7,6 +7,7 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TNonblockingServerSocket;
+import org.sagesource.simplerpc.core.protocol.TEnhanceTransProtocol;
 import org.sagesource.test.api.HelloWorldService;
 import org.sagesource.test.api.impl.HelloWorldServiceImpl;
 
@@ -23,12 +24,11 @@ public class HelloServerDemo {
 
 			TProcessor tprocessor = new HelloWorldService.Processor(new HelloWorldServiceImpl());
 
-			// 简单的单线程服务模型，一般用于测试
 			TNonblockingServerSocket     serverTransport = new TNonblockingServerSocket(SERVER_PORT);
 			TThreadedSelectorServer.Args tArgs           = new TThreadedSelectorServer.Args(serverTransport);
 			tArgs.processorFactory(new TProcessorFactory(tprocessor));
 			tArgs.transportFactory(new TFramedTransport.Factory());
-			tArgs.protocolFactory(new TCompactProtocol.Factory());
+			tArgs.protocolFactory(new TEnhanceTransProtocol.Factory(new TCompactProtocol.Factory()));
 
 			TServer server = new TThreadedSelectorServer(tArgs);
 			server.serve();

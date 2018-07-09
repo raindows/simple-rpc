@@ -92,7 +92,7 @@ public class TProtocolPooledFactory extends BasePooledObjectFactory<TProtocol> {
 		if (tTransport != null && !tTransport.isOpen()) {
 			tTransport.open();
 		}
-		TProtocol protocol = new TCompactProtocol(tTransport);
+		TProtocol protocol = new TEnhanceTransProtocol(new TCompactProtocol(tTransport));
 		return protocol;
 	}
 
