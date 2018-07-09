@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -50,7 +51,7 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	/**
 	 * 服务提供方信息
 	 */
-	private final List<ServerInfo> serverInfoList = new ArrayList<>();
+	private final List<ServerInfo> serverInfoList = new CopyOnWriteArrayList<>();
 
 	/**
 	 * 将调用的服务列表缓存，当serverInfoList为空的时候，可以尝试从缓存列表中获取机器信息
@@ -143,10 +144,8 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 					currentServerInfoList.add(serverInfo);
 				}
 				// 将最新的机器列表 添加到节点列表
-				synchronized (LOCK_OBJ) {
-					serverInfoList.clear();
-					serverInfoList.addAll(currentServerInfoList);
-				}
+				serverInfoList.clear();
+				serverInfoList.addAll(currentServerInfoList);
 			}
 		});
 	}
