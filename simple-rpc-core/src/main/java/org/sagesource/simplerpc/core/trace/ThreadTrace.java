@@ -19,4 +19,8 @@ public class ThreadTrace {
 	public static Long get() {
 		return threadLocal.get();
 	}
+
+	public static void remove() {
+		threadLocal.remove();
+	}
 }

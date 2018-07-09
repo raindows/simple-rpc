@@ -60,6 +60,7 @@ public class TEnhanceTransProtocol extends TProtocolDecorator {
 			throw new TProtocolException(TProtocolException.INVALID_DATA, "Expected traceId is null");
 		}
 
+		ThreadTrace.remove();
 		ThreadTrace.set(Long.parseLong(traceId));
 		name = name.substring(traceIdIndex + 1);
 		return new TMessage(name, message.type, message.seqid);

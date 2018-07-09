@@ -6,6 +6,9 @@ import org.junit.runner.RunWith;
 import org.sagesource.simplerpc.core.trace.ThreadTrace;
 import org.sagesource.simplerpc.core.trace.TraceFun;
 import org.sagesource.test.api.HelloWorldService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath*:spring-client.xml"})
 public class SpringClientDemo {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SpringClientDemo.class);
 
 	@Autowired
 	@Qualifier("helloWorldService")
@@ -29,14 +33,16 @@ public class SpringClientDemo {
 
 	@Test
 	public void test() throws Exception {
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 2; i++) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
+						Thread.sleep(100);
 						ThreadTrace.set(TraceFun.getTrace());
-						System.out.println(helloWorldService.sayHello("sage"));
-					} catch (TException e) {
+						MDC.put("traceId", ThreadTrace.get() + "");
+						LOGGER.info(helloWorldService.sayHello("sage" + ThreadTrace.get()));
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
