@@ -51,10 +51,6 @@ public class ClientProtocolPoolFactory {
 		String serviceName = serviceAddressProviderAgent.getServiceName();
 		String version     = serviceAddressProviderAgent.getVersion();
 
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Create Client Protocol Pool. PoolConfig=[{}],ServiceName=[{}],Version=[{}]",
-					ReflectionToStringBuilder.toString(poolConfig), serviceName, version);
-
 		// 服务名称,尝试从缓存中获取已存在的连接池
 		ObjectPool<TProtocol> cachePool = cachePoolMapper.get(serviceName);
 		if (cachePool != null) {
@@ -64,6 +60,11 @@ public class ClientProtocolPoolFactory {
 			synchronized (LOCK_OBJ) {
 				cachePool = cachePoolMapper.get(serviceName);
 				if (cachePool == null) {
+
+					if (LOGGER.isDebugEnabled())
+						LOGGER.debug("Create Client Protocol Pool. PoolConfig=[{}],ServiceName=[{}],Version=[{}]",
+								ReflectionToStringBuilder.toString(poolConfig), serviceName, version);
+
 					ObjectPool<TProtocol> pool = new GenericObjectPool<>(
 							new TProtocolPooledFactory()
 									.buildKeepAlive(poolConfig.getKeepAlive())

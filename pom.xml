@@ -18,7 +18,7 @@
     </modules>
 
     <properties>
-        <slf4j.version>1.7.5</slf4j.version>
+        <slf4j.version>1.7.22</slf4j.version>
         <spring-framework.version>4.3.0.RELEASE</spring-framework.version>
         <apache-commons.version>4.0</apache-commons.version>
         <apache-pools.version>2.5.0</apache-pools.version>

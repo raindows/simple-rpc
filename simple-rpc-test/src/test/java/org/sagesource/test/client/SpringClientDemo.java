@@ -8,6 +8,7 @@ import org.sagesource.simplerpc.core.protocol.TProtocolPooledFactory;
 import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.sagesource.simplerpc.core.zookeeper.ZookeeperClientFactory;
 import org.sagesource.test.api.HelloWorldService;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,9 +32,22 @@ public class SpringClientDemo {
 
 	@Test
 	public void test() throws Exception {
-		System.out.println(helloWorldService.sayHello("sage"));
-		ClientProtocolPoolFactory.close();
+		for (int i = 0; i < 2; i++) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						MDC.put("traceId", String.valueOf(System.currentTimeMillis()));
+						System.out.println(helloWorldService.sayHello("sage"));
+					} catch (TException e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+		while (true);
+		/*ClientProtocolPoolFactory.close();
 		ServiceAddressProviderAgent.close();
-		ZookeeperClientFactory.close();
+		ZookeeperClientFactory.close();*/
 	}
 }
