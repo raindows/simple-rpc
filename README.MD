@@ -1,5 +1,6 @@
 ### Simple-RPC
-    Simple-RPC是基于 Thrift 实现的 Java RPC 框架。由于在个人平时学习的，希望加深对 Thrift 和 RPC 的理解，故开发了一个简单的 RPC 框架。
+    Simple-RPC是基于 Thrift 实现的 Java RPC 框架。
+    在个人平时学习的过程总，希望加深对 Thrift 和 RPC 的理解，故开发了一个简单的 RPC 框架。
     Simple-RPC对 Thrift 客户端的改造主要从如下：
         1. 服务发现基于 Zookeeper 自动发现，由于 Zookeeper 原生客户端使用较为复杂，因此使用curator-recipes实现
         2. 客户端使用连接池对服务调用进行管理，提升性能。使用 apache commons pool2 进行连接池开发，降低代码复杂度
