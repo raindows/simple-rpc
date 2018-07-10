@@ -1,6 +1,10 @@
 package org.sagesource.simplerpc.config;
 
+import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>基本系统配置客户端，扩展可继承该类，实现不同配置的获取方式</p>
@@ -30,5 +34,23 @@ public class BaseSystemConfigClient extends AbstractSystemConfigClient {
 	@Override
 	public String zkConnStrConfig() {
 		return getEnvPropertyValue(SIMEPLE_RPC_ZK, null);
+	}
+
+	@Override
+	public List<String> clientBeforeFilterList() {
+		String filterStr = super.getPropertiesValue(PROPERTY_CLIENT_BEFORE_FILTER, "beforeFilter", null);
+		if (!StringUtils.isEmpty(filterStr)) {
+			return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(filterStr);
+		}
+		return new ArrayList<>(0);
+	}
+
+	@Override
+	public List<String> clientPostFilterList() {
+		String filterStr = super.getPropertiesValue(PROPERTY_CLIENT_BEFORE_FILTER, "postFilter", null);
+		if (!StringUtils.isEmpty(filterStr)) {
+			return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(filterStr);
+		}
+		return new ArrayList<>(0);
 	}
 }
