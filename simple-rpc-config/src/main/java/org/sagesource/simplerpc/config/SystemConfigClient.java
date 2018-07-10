@@ -1,0 +1,25 @@
+package org.sagesource.simplerpc.config;
+
+/**
+ * <p>系统配置客户端接口</p>
+ * <pre>
+ *     author      XueQi
+ *     date        2018/7/10
+ *     email       job.xueqi@outlook.com
+ * </pre>
+ */
+public interface SystemConfigClient {
+
+	/**
+	 * 获取静态路由配置
+	 *
+	 * @return
+	 */
+	String staticRouterConfig();
+
+	/**
+	 * 获取 ZK 连接地址
+	 * @return
+	 */
+	String zkConnStrConfig();
+}

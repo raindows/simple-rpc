@@ -9,28 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>simple-rpc-core</artifactId>
+    <artifactId>simple-rpc-config</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.sagesource</groupId>
-            <artifactId>simple-rpc-config</artifactId>
-        </dependency>
-
-        <!-- Thrift -->
-        <dependency>
-            <groupId>org.apache.thrift</groupId>
-            <artifactId>libthrift</artifactId>
-        </dependency>
-
-        <!-- zookeeper -->
-        <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-framework</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-recipes</artifactId>
+            <artifactId>simple-rpc-basic</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,12 +1,15 @@
-package org.sagesource.simplerpc.client.filter;
+package org.sagesource.simplerpc.basic;
 
 /**
- * <p>客户端操作 Filter</p>
+ * <p></p>
  * <pre>
  *     author      XueQi
  *     date        2018/7/9
  *     email       job.xueqi@outlook.com
  * </pre>
  */
-public interface IClientFilter {
+public interface Constants {
+
+	String TRACE_ID = "traceId";
+
 }

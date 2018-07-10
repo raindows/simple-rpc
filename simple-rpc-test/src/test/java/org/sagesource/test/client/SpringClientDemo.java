@@ -56,7 +56,7 @@ public class SpringClientDemo {
 
 	@Test
 	public void test2() throws TException {
-		ThreadTrace.set(TraceFun.getTrace());
-		System.out.println(helloWorldService.sayHello("sage"));
+		LOGGER.info(helloWorldService.sayHello("sage"));
+		System.out.println(ThreadTrace.get());
 	}
 }

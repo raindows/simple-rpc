@@ -38,6 +38,8 @@
     - zookeeper zk服务注册与发现 
 ##### simple-rpc-spring
     - client 调用方 Spring 支持
+##### simple-rpc-config
+    - 配置管理
 ##### simple-rpc-test
     单元测试
 

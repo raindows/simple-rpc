@@ -4,7 +4,9 @@ import org.apache.commons.pool2.ObjectPool;
 import org.apache.thrift.protocol.TProtocol;
 import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
+import org.sagesource.simplerpc.client.filter.TraceClientFilter;
 import org.sagesource.simplerpc.client.pool.ClientProtocolPoolFactory;
+import org.sagesource.simplerpc.core.filter.IFilter;
 import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,8 @@ import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>Client 动态代理 Handler</p>
@@ -38,6 +42,15 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 	private String                      serviceName;
 	// 服务版本号
 	private String                      version;
+	// 前置过滤器列表
+	private static List<IFilter> beforeFilterList = new ArrayList<>();
+	private static List<IFilter> postFilterList   = new ArrayList<>();
+
+	// 静态初始化
+	static {
+		// trace filter
+		beforeFilterList.add(new TraceClientFilter());
+	}
 
 	public ServiceClientProxyInvocationHandler(String serviceName, String version, ProtocolPoolConfig protocolPoolConfig) throws Exception {
 		if (LOGGER.isDebugEnabled())
@@ -69,7 +82,11 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 
 			// 实例化构造方法
 			Object clientInstance = clientInterfaceClazz.getConstructor(TProtocol.class).newInstance(protocol);
+
+			// 执行前置拦截器
+			doBeforeFilter();
 			result = method.invoke(clientInstance, args);
+			doPostFilter();
 		} catch (Exception e) {
 			if (e instanceof InvocationTargetException) {
 				// 动态代理执行阶段异常
@@ -93,5 +110,25 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 			}
 		}
 		return result;
+	}
+
+	//........................//
+
+	/**
+	 * 执行拦截器
+	 */
+	private void doBeforeFilter() {
+		for (IFilter iFilter : beforeFilterList) {
+			iFilter.beforeFilter();
+		}
+	}
+
+	/**
+	 * 执行后置拦截器
+	 */
+	private void doPostFilter() {
+		for (IFilter iFilter : postFilterList) {
+			iFilter.postFilter();
+		}
 	}
 }

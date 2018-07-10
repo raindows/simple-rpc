@@ -8,7 +8,7 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
-import org.sagesource.simplerpc.basic.utils.ConfigValueUtils;
+import org.sagesource.simplerpc.config.SystemConfigClientManager;
 import org.sagesource.simplerpc.core.loadbalance.LoadBalanceFactory;
 import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 import org.slf4j.Logger;
@@ -73,7 +73,7 @@ public class ServiceAddressProviderAgent implements ZKConstants {
 	 */
 	public void init() throws Exception {
 		// 获取 zkClient, 通过 env 获取 zk 的连接字符串
-		String zkConnStr = ConfigValueUtils.getEnvPropertyValue(SIMEPLE_RPC_ZK, null);
+		String zkConnStr = SystemConfigClientManager.getSystemConfigClient().zkConnStrConfig();
 		this.zkClient = ZookeeperClientFactory.createClient(zkConnStr);
 
 		// 构建服务节点

@@ -2,12 +2,12 @@ package org.sagesource.simplerpc.core.loadbalance.impl;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
-import org.sagesource.simplerpc.core.loadbalance.LoadBalanceEngine;
-import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
-import org.sagesource.simplerpc.basic.utils.ConfigValueUtils;
+import org.sagesource.simplerpc.config.SystemConfigClientManager;
+import org.sagesource.simplerpc.core.loadbalance.LoadBalanceEngine;
 import org.sagesource.simplerpc.core.loadbalance.RoundRobinFactory;
+import org.sagesource.simplerpc.core.zookeeper.utils.ZKConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,15 +57,7 @@ public class SimpleLoadBalanceEngineImpl implements LoadBalanceEngine, ZKConstan
 	 * @return
 	 */
 	private ServerInfo queryStaticRouterConfig(String serviceName, String version) {
-		// 先获取 JVM 的属性配置
-		String jvmStaticRouterConfig = ConfigValueUtils.getJvmPropertyValue(SIMPLERPC_STATIC_ROUTER_JVM, null);
-		String envStaticRouterConfig = ConfigValueUtils.getEnvPropertyValue(SIMPLERPC_STATIC_ROUTER, null);
-		String staticRouterConfig    = null;
-		if (!StringUtils.isEmpty(jvmStaticRouterConfig)) {
-			staticRouterConfig = jvmStaticRouterConfig;
-		} else if (!StringUtils.isEmpty(envStaticRouterConfig)) {
-			staticRouterConfig = envStaticRouterConfig;
-		}
+		String staticRouterConfig    = SystemConfigClientManager.getSystemConfigClient().staticRouterConfig();
 
 		// 存在静态路由配置
 		String staticRouterStr = null;

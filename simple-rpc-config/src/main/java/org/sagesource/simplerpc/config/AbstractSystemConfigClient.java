@@ -1,18 +1,18 @@
-package org.sagesource.simplerpc.basic.utils;
+package org.sagesource.simplerpc.config;
 
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <p>配置值工具类</p>
+ * <p></p>
  * <pre>
  *     author      XueQi
- *     date        2018/7/3
+ *     date        2018/7/10
  *     email       job.xueqi@outlook.com
  * </pre>
  */
-public class ConfigValueUtils {
+public abstract class AbstractSystemConfigClient implements SystemConfigClient, ConfigKeyConstants {
 
 	/**
 	 * 获取 JVM 的参数值
@@ -21,7 +21,7 @@ public class ConfigValueUtils {
 	 * @param defaultValue
 	 * @return
 	 */
-	public static String getJvmPropertyValue(String property, String defaultValue) {
+	protected String getJvmPropertyValue(String property, String defaultValue) {
 		try {
 			String value = System.getProperty(property);
 			if (value == null) return defaultValue;
@@ -39,7 +39,7 @@ public class ConfigValueUtils {
 	 * @param defaultValue
 	 * @return
 	 */
-	public static String getEnvPropertyValue(String property, String defaultValue) {
+	protected String getEnvPropertyValue(String property, String defaultValue) {
 		try {
 			String value = System.getenv(property);
 			if (value == null) return defaultValue;
@@ -62,13 +62,13 @@ public class ConfigValueUtils {
 	 * @param defaultValue
 	 * @return
 	 */
-	public static String getPropertiesValue(String propertiesFile, String property, String defaultValue) {
+	protected String getPropertiesValue(String propertiesFile, String property, String defaultValue) {
 		Properties properties = cachePropertiesMapper.get(propertiesFile);
 		if (properties == null) {
 			synchronized (LOCK_OBJ) {
 				InputStream in = null;
 				try {
-					in = ConfigValueUtils.class.getResourceAsStream(propertiesFile);
+					in = AbstractSystemConfigClient.class.getResourceAsStream(propertiesFile);
 					properties.load(in);
 					cachePropertiesMapper.putIfAbsent(propertiesFile, properties);
 				} catch (Exception e) {

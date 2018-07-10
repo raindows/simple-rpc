@@ -15,6 +15,7 @@
         <module>simple-rpc-client</module>
         <module>simple-rpc-test</module>
         <module>simple-rpc-spring</module>
+        <module>simple-rpc-config</module>
     </modules>
 
     <properties>
@@ -52,6 +53,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>simple-rpc-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sagesource</groupId>
+                <artifactId>simple-rpc-config</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
