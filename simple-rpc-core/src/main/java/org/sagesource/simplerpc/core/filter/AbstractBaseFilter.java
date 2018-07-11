@@ -1,5 +1,6 @@
 package org.sagesource.simplerpc.core.filter;
 
+import org.sagesource.simplerpc.basic.exception.SimpleRpcFilterException;
 import org.sagesource.simplerpc.core.context.Context;
 import org.sagesource.simplerpc.core.context.ThreadContext;
 
@@ -14,13 +15,13 @@ import org.sagesource.simplerpc.core.context.ThreadContext;
 public abstract class AbstractBaseFilter implements IFilter {
 
 	@Override
-	public final void beforeFilter() {
-		Context context = ThreadContext.get();
-		if (context == null) {
-			context = new Context();
-			ThreadContext.set(context);
+	public final void filter() {
+		try {
+			Context context = ThreadContext.get();
+			doFilter(context);
+		} catch (Exception e) {
+			throw new SimpleRpcFilterException(e);
 		}
-		doBeforeFilter(context);
 	}
 
 	/**
@@ -28,18 +29,5 @@ public abstract class AbstractBaseFilter implements IFilter {
 	 *
 	 * @param context
 	 */
-	protected abstract void doBeforeFilter(Context context);
-
-	@Override
-	public final void postFilter() {
-		Context context = ThreadContext.get();
-		doPostFilter(context);
-	}
-
-	/**
-	 * 后置拦截器逻辑
-	 *
-	 * @param context
-	 */
-	protected abstract void doPostFilter(Context context);
+	protected abstract void doFilter(Context context);
 }

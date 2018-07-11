@@ -1,5 +1,7 @@
 package org.sagesource.simplerpc.core.filter;
 
+import org.sagesource.simplerpc.basic.exception.SimpleRpcFilterException;
+
 /**
  * <p> 过滤器接口 </p>
  * <pre>
@@ -11,12 +13,7 @@ package org.sagesource.simplerpc.core.filter;
 public interface IFilter {
 
 	/**
-	 * 前置过滤器
+	 * 执行过滤器
 	 */
-	void beforeFilter();
-
-	/**
-	 * 后置过滤器
-	 */
-	void postFilter();
+	void filter() throws SimpleRpcFilterException;
 }

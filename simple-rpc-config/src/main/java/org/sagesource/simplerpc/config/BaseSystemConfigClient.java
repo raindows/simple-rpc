@@ -38,7 +38,7 @@ public class BaseSystemConfigClient extends AbstractSystemConfigClient {
 
 	@Override
 	public List<String> clientBeforeFilterList() {
-		String filterStr = super.getPropertiesValue(PROPERTY_CLIENT_BEFORE_FILTER, "beforeFilter", null);
+		String filterStr = super.getPropertiesValue(PROPERTY_CLIENTFILTER_FILENAME, "beforeFilter", null);
 		if (!StringUtils.isEmpty(filterStr)) {
 			return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(filterStr);
 		}
@@ -47,10 +47,16 @@ public class BaseSystemConfigClient extends AbstractSystemConfigClient {
 
 	@Override
 	public List<String> clientPostFilterList() {
-		String filterStr = super.getPropertiesValue(PROPERTY_CLIENT_BEFORE_FILTER, "postFilter", null);
+		String filterStr = super.getPropertiesValue(PROPERTY_CLIENTFILTER_FILENAME, "postFilter", null);
 		if (!StringUtils.isEmpty(filterStr)) {
 			return Splitter.on(",").trimResults().omitEmptyStrings().splitToList(filterStr);
 		}
 		return new ArrayList<>(0);
+	}
+
+	@Override
+	public String appName() {
+		String appName = super.getPropertiesValue(PROPERTY_GLOBAL_FILENAME, "app.name", null);
+		return appName;
 	}
 }

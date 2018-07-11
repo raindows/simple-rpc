@@ -20,61 +20,8 @@ public class ServerInfo {
 	private String serviceVersion;
 	// 服务权重
 	private int    weight;
-
-	/**
-	 * 构建服务端 IP
-	 *
-	 * @param serverIP
-	 * @return
-	 */
-	public ServerInfo buildServerIP(String serverIP) {
-		this.serverIP = serverIP;
-		return this;
-	}
-
-	/**
-	 * 构建端口
-	 *
-	 * @param port
-	 * @return
-	 */
-	public ServerInfo buildPort(int port) {
-		this.port = port;
-		return this;
-	}
-
-	/**
-	 * 构建服务名称
-	 *
-	 * @param serviceName
-	 * @return
-	 */
-	public ServerInfo buildServiceName(String serviceName) {
-		this.serviceName = serviceName;
-		return this;
-	}
-
-	/**
-	 * 构建服务版本号
-	 *
-	 * @param serviceVersion
-	 * @return
-	 */
-	public ServerInfo buildServiceVersion(String serviceVersion) {
-		this.serviceVersion = serviceVersion;
-		return this;
-	}
-
-	/**
-	 * 构建权重
-	 *
-	 * @param weight
-	 * @return
-	 */
-	public ServerInfo buildWeight(int weight) {
-		this.weight = weight;
-		return this;
-	}
+	// 应用名称
+	private String appName;
 
 	@Override
 	public int hashCode() {
@@ -91,6 +38,11 @@ public class ServerInfo {
 				&& serverInfo.port == this.port)
 			return true;
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "ServerInfo:[serverIP=" + this.serverIP + ",port=" + this.port + ",serviceName=" + this.serviceName + ",serviceVersion=" + this.serviceVersion + ",weight=" + this.weight + "]";
 	}
 
 	public String getServerIP() {
@@ -131,5 +83,13 @@ public class ServerInfo {
 
 	public void setWeight(int weight) {
 		this.weight = weight;
+	}
+
+	public String getAppName() {
+		return appName;
+	}
+
+	public void setAppName(String appName) {
+		this.appName = appName;
 	}
 }

@@ -57,7 +57,7 @@ public class SimpleLoadBalanceEngineImpl implements LoadBalanceEngine, ZKConstan
 	 * @return
 	 */
 	private ServerInfo queryStaticRouterConfig(String serviceName, String version) {
-		String staticRouterConfig    = SystemConfigClientManager.getSystemConfigClient().staticRouterConfig();
+		String staticRouterConfig = SystemConfigClientManager.getSystemConfigClient().staticRouterConfig();
 
 		// 存在静态路由配置
 		String staticRouterStr = null;
@@ -88,11 +88,11 @@ public class SimpleLoadBalanceEngineImpl implements LoadBalanceEngine, ZKConstan
 		// 处理静态路由字符串配置
 		if (!StringUtils.isEmpty(staticRouterStr)) {
 			List<String> staticRouterList = Splitter.on(":").trimResults().splitToList(staticRouterStr);
-			ServerInfo serverInfo = new ServerInfo()
-					.buildServiceName(serviceName)
-					.buildServiceVersion(version)
-					.buildServerIP(staticRouterList.get(0))
-					.buildPort(Integer.parseInt(staticRouterList.get(1)));
+			ServerInfo   serverInfo       = new ServerInfo();
+			serverInfo.setServiceName(serviceName);
+			serverInfo.setServiceVersion(version);
+			serverInfo.setServerIP(staticRouterList.get(0));
+			serverInfo.setPort(Integer.parseInt(staticRouterList.get(1)));
 			cacheStaticRouterMapper.putIfAbsent(cacheKey, serverInfo);
 			return serverInfo;
 		}

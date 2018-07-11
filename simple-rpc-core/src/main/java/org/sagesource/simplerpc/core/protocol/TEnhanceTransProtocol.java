@@ -3,6 +3,7 @@ package org.sagesource.simplerpc.core.protocol;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
 import org.apache.thrift.transport.TTransport;
+import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.core.trace.ThreadTrace;
 import org.sagesource.simplerpc.core.trace.TraceSupport;
 
@@ -16,6 +17,11 @@ import org.sagesource.simplerpc.core.trace.TraceSupport;
  */
 public class TEnhanceTransProtocol extends TProtocolDecorator {
 	private static final String TRACEID_SEPARATOR = ":";
+
+	/**
+	 * 目标服务器信息
+	 */
+	private ServerInfo serverInfo;
 
 	// 重写 ThriftProtocolFactory
 	public static class Factory implements TProtocolFactory {
@@ -33,6 +39,11 @@ public class TEnhanceTransProtocol extends TProtocolDecorator {
 
 	public TEnhanceTransProtocol(TProtocol protocol) {
 		super(protocol);
+	}
+
+	public TEnhanceTransProtocol(TProtocol protocol, ServerInfo serverInfo) {
+		super(protocol);
+		this.serverInfo = serverInfo;
 	}
 
 	/**
@@ -64,5 +75,9 @@ public class TEnhanceTransProtocol extends TProtocolDecorator {
 		TraceSupport.set(traceId);
 		name = name.substring(traceIdIndex + 1);
 		return new TMessage(name, message.type, message.seqid);
+	}
+
+	public ServerInfo getServerInfo() {
+		return serverInfo;
 	}
 }

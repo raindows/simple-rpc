@@ -39,4 +39,11 @@ public interface SystemConfigClient {
 	 * @return
 	 */
 	List<String> clientPostFilterList();
+
+	/**
+	 * 获取应用名称
+	 *
+	 * @return
+	 */
+	String appName();
 }

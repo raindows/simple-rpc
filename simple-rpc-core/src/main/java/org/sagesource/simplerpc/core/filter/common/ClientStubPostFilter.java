@@ -8,19 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>客户端默认前置过滤器</p>
+ * <p>客户端默认后置过滤器</p>
  * <pre>
  *     author      XueQi
  *     date        2018/7/11
- *     email       sage.xue@vipshop.com
+ *     email       job.xueqi@outlook.com
  * </pre>
  */
-public class ClientStubBeforeFilter extends AbstractBaseFilter {
-	private static Logger LOGGER = LoggerFactory.getLogger(ClientStubBeforeFilter.class);
+public class ClientStubPostFilter extends AbstractBaseFilter {
+	private static Logger LOGGER = LoggerFactory.getLogger(ClientStubPostFilter.class);
 
 	@Override
 	protected void doFilter(Context context) {
-		// 上传 Context 信息
+		// 设置结束时间
+		context.setInvokeEndTime(System.currentTimeMillis());
+		ThreadContext.set(context);
 		LOGGER.debug(JSON.toJSONString(ThreadContext.get()));
 	}
 }
