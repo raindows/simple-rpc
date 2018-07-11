@@ -15,5 +15,8 @@ public interface IFilter {
 	 */
 	void beforeFilter();
 
+	/**
+	 * 后置过滤器
+	 */
 	void postFilter();
 }

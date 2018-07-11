@@ -68,6 +68,7 @@ public abstract class AbstractSystemConfigClient implements SystemConfigClient, 
 			synchronized (LOCK_OBJ) {
 				InputStream in = null;
 				try {
+					properties = new Properties();
 					in = AbstractSystemConfigClient.class.getResourceAsStream(propertiesFile);
 					properties.load(in);
 					cachePropertiesMapper.putIfAbsent(propertiesFile, properties);

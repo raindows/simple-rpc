@@ -20,5 +20,5 @@ public interface ConfigKeyConstants {
 	String SIMPLERPC_STATIC_ROUTER_JVM = "simplerpc.static.route";
 
 	//...... 配置文件参数 KEY ......//
-	String PROPERTY_CLIENT_BEFORE_FILTER = "/osp/client_filter.properties";
+	String PROPERTY_CLIENT_BEFORE_FILTER = "/rpc/client_filter.properties";
 }

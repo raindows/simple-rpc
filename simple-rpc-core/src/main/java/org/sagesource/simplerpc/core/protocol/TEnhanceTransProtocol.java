@@ -4,6 +4,7 @@ import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
 import org.apache.thrift.transport.TTransport;
 import org.sagesource.simplerpc.core.trace.ThreadTrace;
+import org.sagesource.simplerpc.core.trace.TraceSupport;
 
 /**
  * <p>增强 TTprotocol</p>
@@ -60,8 +61,7 @@ public class TEnhanceTransProtocol extends TProtocolDecorator {
 			throw new TProtocolException(TProtocolException.INVALID_DATA, "Expected traceId is null");
 		}
 
-		ThreadTrace.remove();
-		ThreadTrace.set(Long.parseLong(traceId));
+		TraceSupport.set(traceId);
 		name = name.substring(traceIdIndex + 1);
 		return new TMessage(name, message.type, message.seqid);
 	}

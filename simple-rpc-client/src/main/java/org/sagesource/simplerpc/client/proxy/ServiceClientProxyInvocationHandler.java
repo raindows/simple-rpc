@@ -4,8 +4,8 @@ import org.apache.commons.pool2.ObjectPool;
 import org.apache.thrift.protocol.TProtocol;
 import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcException;
-import org.sagesource.simplerpc.client.filter.TraceClientFilter;
 import org.sagesource.simplerpc.client.pool.ClientProtocolPoolFactory;
+import org.sagesource.simplerpc.core.filter.FilterManagerClient;
 import org.sagesource.simplerpc.core.filter.IFilter;
 import org.sagesource.simplerpc.core.zookeeper.ServiceAddressProviderAgent;
 import org.slf4j.Logger;
@@ -48,8 +48,10 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 
 	// 静态初始化
 	static {
-		// trace filter
-		beforeFilterList.add(new TraceClientFilter());
+		// 获取前置过滤器
+		beforeFilterList.addAll(FilterManagerClient.getInstance().getClientBeforeFilter());
+		// 获取后置过滤器
+		postFilterList.addAll(FilterManagerClient.getInstance().getClientPostFilter());
 	}
 
 	public ServiceClientProxyInvocationHandler(String serviceName, String version, ProtocolPoolConfig protocolPoolConfig) throws Exception {
@@ -85,7 +87,9 @@ public class ServiceClientProxyInvocationHandler implements InvocationHandler {
 
 			// 执行前置拦截器
 			doBeforeFilter();
+			// 执行方法
 			result = method.invoke(clientInstance, args);
+			// 执行后置拦截器
 			doPostFilter();
 		} catch (Exception e) {
 			if (e instanceof InvocationTargetException) {

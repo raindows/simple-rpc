@@ -1,4 +1,4 @@
-package org.sagesource.simplerpc.core;
+package org.sagesource.simplerpc.core.context;
 
 /**
  * <p>上下文对象</p>
@@ -8,5 +8,5 @@ package org.sagesource.simplerpc.core;
  *     email       job.xueqi@outlook.com
  * </pre>
  */
-public interface Context {
+public class Context {
 }
