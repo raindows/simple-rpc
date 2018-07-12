@@ -17,12 +17,12 @@
             同时，Trace 信息通过 ThreadLocal 写入到当前线程上下文，可以支持服务调用链追踪
             通过SLF4J 的 MDC，存储 traceId 对象，完成日志的 trace 追踪
         3. 上下文 Context：
-            存放一次调用的上线问信息，包括调用方信息，接口服务信息，目标服务方信息等。使用者可以通过 Filter 获取到 Context，根据信息
-                实现自定义逻辑
+            存放一次调用的上下文信息，包括调用方信息，接口服务信息，目标服务方信息等。
+            使用者可以通过 Filter 获取到 Context，根据信息实现自定义逻辑
         4. Filter 过滤器：
             a. 可以自定义客户端的方法调用前后的过滤器，上线文 Context 对象中保存了整个调用的信息，可以获取并处理
-            b. Trace追踪 的支持通过 Filter 来实现，可以在 ClientStubBeforeFilter ClientStubPostFilter 中实现 trace 信息的上报，
-                并生成 Trace 调用链
+            b. Trace追踪的支持通过 Filter 来实现。
+               可以在 ClientStubBeforeFilter ClientStubPostFilter 中实现 trace 信息的上报，并生成 Trace 调用链。
             c. Filter 配置在 properties 中，灵活修改 Filter 的执行流程
 ---
 #### 模块介绍
