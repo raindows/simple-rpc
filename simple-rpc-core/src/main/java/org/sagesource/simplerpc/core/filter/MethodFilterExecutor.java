@@ -2,7 +2,6 @@ package org.sagesource.simplerpc.core.filter;
 
 import org.sagesource.simplerpc.basic.entity.ServerInfo;
 import org.sagesource.simplerpc.basic.exception.SimpleRpcFilterException;
-import org.sagesource.simplerpc.config.SystemConfigClientManager;
 import org.sagesource.simplerpc.core.context.Context;
 import org.sagesource.simplerpc.core.context.ThreadContext;
 import org.sagesource.simplerpc.core.trace.ThreadTrace;
@@ -43,9 +42,7 @@ public class MethodFilterExecutor {
 	 */
 	public static Object clientInvokeMethodByFilter(Object instance, Method method, Object[] args, ServerInfo serverInfo) throws Exception {
 		// 创建 Context
-		String appName   = SystemConfigClientManager.getSystemConfigClient().appName();
-		long   beginTime = System.currentTimeMillis();
-		Context context = new Context(ThreadTrace.get(), appName, args, beginTime, serverInfo.getServiceName(), method.getName(), serverInfo.getServiceVersion(),
+		Context context = new Context(ThreadTrace.get(), args, serverInfo.getServiceName(), method.getName(), serverInfo.getServiceVersion(),
 				serverInfo.getServerIP(), serverInfo.getPort(), serverInfo.getAppName());
 		ThreadContext.set(context);
 

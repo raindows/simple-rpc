@@ -9,15 +9,21 @@
         4. 客户端与 Spring 解耦，通过 simple-rpc-spring 工程，提供 Spring 支持
         5. 客户端自定义支持 Filter，可以在调用远程方法前和方法调用后执行自定义过滤器逻辑
         6. 支持静态路由，指定服务和目标机器信息
+    Simple-RPC对 Thrift 服务端的改造正在进行
     其他特性：
-        1. 添加 Trace 追踪支持：
+        1. 重写TProtocolDecorator，自定义消息接收和传递的过程
+        2. 添加 Trace 追踪支持：
             通过重写 TProtocolDecorator 自定义消息接收和传输的过程，从消息中获取每次请求的 trace 信息。 
             同时，Trace 信息通过 ThreadLocal 写入到当前线程上下文，可以支持服务调用链追踪
             通过SLF4J 的 MDC，存储 traceId 对象，完成日志的 trace 追踪
-        2. 上下文 Context：
-            ClientContext 对象存放当前线程调用的服务信息，如：服务名称 参数 目标机器信息等。存储在 ThreadLocal 中
-            ProviderContext 对象存放当前线程的调用方信息，如：客户端机器信息等
-    
+        3. 上下文 Context：
+            存放一次调用的上线问信息，包括调用方信息，接口服务信息，目标服务方信息等。使用者可以通过 Filter 获取到 Context，根据信息
+                实现自定义逻辑
+        4. Filter 过滤器：
+            a. 可以自定义客户端的方法调用前后的过滤器，上线文 Context 对象中保存了整个调用的信息，可以获取并处理
+            b. Trace追踪 的支持通过 Filter 来实现，可以在 ClientStubBeforeFilter ClientStubPostFilter 中实现 trace 信息的上报，
+                并生成 Trace 调用链
+            c. Filter 配置在 properties 中，灵活修改 Filter 的执行流程
 ---
 #### 模块介绍
 ##### simple-rpc-basic
@@ -36,6 +42,7 @@
     - protocol 通信协议重写
     - trace 追踪 trace 支持
     - zookeeper zk服务注册与发现 
+##### simple-rpc-provider
 ##### simple-rpc-spring
     - client 调用方 Spring 支持
 ##### simple-rpc-config
@@ -44,9 +51,17 @@
     单元测试
 
 #### 使用说明
-1. 调用方
+##### 0. 通用配置
+    # ZK 连接地址
+    export SIMEPLE_RPC_ZK=127.0.0.1:2181
+    # 客户端静态路由配置
+    export SIMPLERPC_STATIC_ROUTER=serviceName.version=ip:port,....
+    # 客户端静态路由 jvm 参数
+    -Dsimplerpc.static.router=serviceName.version=ip:port,...
     
-2. 服务提供方
+##### 1. 调用方
+    
+##### 2. 服务提供方
 
 #### TODO LIST
 1. 规范化日志输出
@@ -56,3 +71,4 @@
 5. 异步调用
 6. Codegen 代码生成工具
 7. 本地 mock
+8. 服务端改造

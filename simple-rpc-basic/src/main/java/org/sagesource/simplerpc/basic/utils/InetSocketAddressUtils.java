@@ -3,8 +3,10 @@ package org.sagesource.simplerpc.basic.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 
 /**
  * <p>IP 工具类</p>
@@ -32,8 +34,24 @@ public class InetSocketAddressUtils {
 	 */
 	private static void initLocalIP() {
 		try {
-			localIP = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
+			Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
+			while (netInterfaces.hasMoreElements()) {
+				NetworkInterface netInterface = netInterfaces.nextElement();
+				// 每个网络接口,都会有多个"网络地址",比如一定会有lookback地址,会有siteLocal地址等.以及IPV4或者IPV6 .
+				Enumeration<InetAddress> addresses = netInterface.getInetAddresses();
+				while (addresses.hasMoreElements()) {
+					InetAddress address = addresses.nextElement();
+					if (address instanceof Inet6Address) {
+						continue;
+					}
+					if (address.isSiteLocalAddress() && !address.isLoopbackAddress()) {
+						localIP = address.getHostAddress();
+						LOGGER.info("resolve server ip :" + localIP);
+						continue;
+					}
+				}
+			}
+		} catch (Exception e) {
 			LOGGER.error("Init Local IP Error.", e);
 		}
 	}

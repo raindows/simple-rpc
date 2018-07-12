@@ -1,5 +1,8 @@
 package org.sagesource.simplerpc.core.context;
 
+import org.sagesource.simplerpc.basic.utils.InetSocketAddressUtils;
+import org.sagesource.simplerpc.config.SystemConfigClientManager;
+
 /**
  * <p>上下文对象</p>
  * <pre>
@@ -29,6 +32,10 @@ public class Context {
 	 * 调用结束时间
 	 */
 	private long     invokeEndTime;
+	/**
+	 * 调用方地址
+	 */
+	private String   invokeAddress;
 
 	/**
 	 * 目标服务名称
@@ -55,17 +62,19 @@ public class Context {
 	 */
 	private String providerAppName;
 
-	public Context(Long traceId, String invokeAppName, Object[] invokeArgs, long invokeBeginTime, String providerServiceName, String providerServiceMethod, String providerServiceVersion, String providerServiceAddress, int providerServicePort, String providerAppName) {
+	public Context(Long traceId, Object[] invokeArgs, String providerServiceName, String providerServiceMethod, String providerServiceVersion, String providerServiceAddress, int providerServicePort, String providerAppName) {
 		this.traceId = traceId;
-		this.invokeAppName = invokeAppName;
 		this.invokeArgs = invokeArgs;
-		this.invokeBeginTime = invokeBeginTime;
 		this.providerServiceName = providerServiceName;
 		this.providerServiceMethod = providerServiceMethod;
 		this.providerServiceVersion = providerServiceVersion;
 		this.providerServiceAddress = providerServiceAddress;
 		this.providerServicePort = providerServicePort;
 		this.providerAppName = providerAppName;
+
+		this.invokeAppName = SystemConfigClientManager.getSystemConfigClient().appName();
+		this.invokeBeginTime = System.currentTimeMillis();
+		this.invokeAddress = InetSocketAddressUtils.getLocalIP();
 	}
 
 	public void setInvokeEndTime(long invokeEndTime) {
@@ -114,5 +123,9 @@ public class Context {
 
 	public Long getTraceId() {
 		return traceId;
+	}
+
+	public String getInvokeAddress() {
+		return invokeAddress;
 	}
 }
