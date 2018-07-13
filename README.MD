@@ -43,6 +43,9 @@
     - trace 追踪 trace 支持
     - zookeeper zk服务注册与发现 
 ### simple-rpc-provider
+    RPC 框架服务端实现，负责服务端的启动和服务注册等
+    - SimpleServiceProviderFactory 简单实现的服务初始化与注册工厂
+    - thread 服务端线程
 ### simple-rpc-spring
     - client 调用方 Spring 支持
 ### simple-rpc-config
