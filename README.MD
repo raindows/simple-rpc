@@ -1,7 +1,7 @@
 ## Simple-RPC
     Simple-RPC是基于 Thrift 实现的 Java RPC 框架。
     在个人平时学习的过程总，希望加深对 Thrift 和 RPC 的理解，故开发了一个简单的 RPC 框架。
-    Simple-RPC对 Thrift 客户端的改造主要从如下：
+    Simple-RPC对 Thrift 客户端的改造主要如下：
         1. 服务发现基于 Zookeeper 自动发现，由于 Zookeeper 原生客户端使用较为复杂，因此使用curator-recipes实现
         2. 客户端使用连接池对服务调用进行管理，提升性能。使用 apache commons pool2 进行连接池开发，降低代码复杂度
         3. LoadBalance：当 Zookeeper 节点的 Watcher 监听到节点变更后，通知客户端重新刷新服务器节点信息。
@@ -9,7 +9,10 @@
         4. 客户端与 Spring 解耦，通过 simple-rpc-spring 工程，提供 Spring 支持
         5. 客户端自定义支持 Filter，可以在调用远程方法前和方法调用后执行自定义过滤器逻辑
         6. 支持静态路由，指定服务和目标机器信息
-    Simple-RPC对 Thrift 服务端的改造正在进行
+    Simple-RPC对 Thrift 服务端的改造主要如下：
+        1. 服务自动注册在 Zookeeper，节点格式：/default/服务名称/服务版本号/IP:PORT 服务方应用名称、权重等信息储存在节点数据中
+        2. 提供服务创建工厂，服务启动在后台线程中
+        3. 服务端与 Spring 解耦，可以通过引入 simple-rpc-spring 工程，提供 Spring 支持
     其他特性：
         1. 重写TProtocolDecorator，自定义消息接收和传递的过程
         2. 添加 Trace 追踪支持：
