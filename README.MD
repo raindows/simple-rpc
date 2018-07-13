@@ -70,7 +70,7 @@
     
     public class HelloClientDemo {
     	public static void main(String[] args) throws Exception {
-    		// 创建客户端 Zookeeper 连接池配置
+            // 创建客户端 Zookeeper 连接池配置
             ProtocolPoolConfig protocolPoolConfig = new ProtocolPoolConfig();
             // zookeeper 连接是否为长连接，如果为 false，每次连接返回到连接池中，都会 close 掉
             protocolPoolConfig.setKeepAlive(true);
@@ -116,11 +116,11 @@
     import org.slf4j.LoggerFactory;
     
     public class SpringClientDemo {
-	    @Autowired
-	    @Qualifier("helloWorldService")
-	    private HelloWorldService.Iface helloWorldService;
+        @Autowired
+        @Qualifier("helloWorldService")
+        private HelloWorldService.Iface helloWorldService;
 	    
-	    @Test
+        @Test
         public void test2() throws TException {
             LOGGER.info(helloWorldService.sayHello("sage"));
         }
