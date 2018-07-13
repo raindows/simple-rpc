@@ -161,7 +161,7 @@
         }
     }
 ```
-#### 服务端非 Spring 模式
+#### 服务端 Spring 模式
 ```xml
     <!-- 创建服务实现类 Spring Bean -->
     <bean id="helloWorldService" class="org.sagesource.test.api.impl.HelloWorldServiceImpl"/>
