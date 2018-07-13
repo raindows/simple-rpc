@@ -18,6 +18,10 @@
         </dependency>
         <dependency>
             <groupId>org.sagesource</groupId>
+            <artifactId>simple-rpc-provider</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sagesource</groupId>
             <artifactId>simple-rpc-spring</artifactId>
         </dependency>
         <dependency>

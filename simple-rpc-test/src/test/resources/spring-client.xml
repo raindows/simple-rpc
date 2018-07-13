@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- 注册 HelloWorldService 服务客户端 -->
-    <bean id="helloWorldService" class="org.sagesource.simplerpc.spring.client.ServiceClientFactoryBean">
+    <bean id="helloWorldService" class="org.sagesource.simplerpc.spring.client.ServiceClientFactoryBean" destroy-method="close">
         <property name="interfaceType" value="org.sagesource.test.api.HelloWorldService.Iface"/>
         <property name="serviceVersion" value="1.0.0"/>
         <property name="protocolPoolConfig">

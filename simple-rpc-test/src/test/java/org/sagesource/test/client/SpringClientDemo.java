@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sagesource.simplerpc.core.trace.ThreadTrace;
 import org.sagesource.simplerpc.core.trace.TraceFun;
+import org.sagesource.simplerpc.core.zookeeper.ZookeeperClientFactory;
 import org.sagesource.test.api.HelloWorldService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,5 +59,6 @@ public class SpringClientDemo {
 	public void test2() throws TException {
 		LOGGER.info(helloWorldService.sayHello("sage"));
 		System.out.println(ThreadTrace.get());
+		ZookeeperClientFactory.close();
 	}
 }

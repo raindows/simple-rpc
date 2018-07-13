@@ -44,7 +44,7 @@ public class ServiceRegisterProviderAgent {
 		String nodeVal = JSON.toJSONString(serverInfo);
 
 		try {
-			zkClient.create().creatingParentContainersIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(node, nodeVal.getBytes());
+			zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(node, nodeVal.getBytes());
 		} catch (Exception e) {
 			throw e;
 		}

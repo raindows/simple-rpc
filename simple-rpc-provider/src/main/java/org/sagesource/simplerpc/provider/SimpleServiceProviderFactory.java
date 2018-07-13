@@ -71,7 +71,7 @@ public class SimpleServiceProviderFactory {
 		TProcessor processor = null;
 		for (Class<?> anInterface : interfaces) {
 			String interfaceName = anInterface.getSimpleName();
-			if (!StringUtils.contains(interfaceName, "IFace")) continue;
+			if (!StringUtils.contains(interfaceName, "Iface")) continue;
 
 			// 获取服务名称
 			String serviceName = anInterface.getEnclosingClass().getName();

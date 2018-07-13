@@ -16,6 +16,10 @@
             <groupId>org.sagesource</groupId>
             <artifactId>simple-rpc-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.sagesource</groupId>
+            <artifactId>simple-rpc-provider</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
