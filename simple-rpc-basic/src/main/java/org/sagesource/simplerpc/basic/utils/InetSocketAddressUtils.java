@@ -1,5 +1,6 @@
 package org.sagesource.simplerpc.basic.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,8 @@ public class InetSocketAddressUtils {
 	}
 
 	public static String getLocalIP() {
+		if (StringUtils.isEmpty(localIP)) return DEFAULT_LOCAL_IP;
+
 		return localIP;
 	}
 }

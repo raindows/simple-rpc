@@ -35,10 +35,8 @@ public class ServiceClientProxy {
 	 * @return
 	 */
 	public static <T> T createClient(Class<T> serviceClass, String version, ProtocolPoolConfig protocolPoolConfig) throws Exception {
-		// 获取接口类名称
-		String serviceClassName = serviceClass.getName();
 		// 服务名称
-		String serviceName = serviceClassName.substring(0, serviceClassName.lastIndexOf(SERVICE_IFACE_NAME));
+		String serviceName = serviceClass.getEnclosingClass().getName();
 		// 从缓存中获取客户端
 		String clientCacheKey = serviceName + ":" + version;
 		Object cacheClient    = cacheClientMapper.get(clientCacheKey);

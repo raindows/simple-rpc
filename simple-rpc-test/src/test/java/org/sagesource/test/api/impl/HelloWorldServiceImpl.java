@@ -17,4 +17,8 @@ public class HelloWorldServiceImpl implements HelloWorldService.Iface {
 		return "Hi," + username + " welcome";
 	}
 
+	public static void main(String[] args) {
+		HelloWorldServiceImpl service = new HelloWorldServiceImpl();
+		System.out.println(service.getClass().getInterfaces()[0]);
+	}
 }
