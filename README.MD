@@ -61,9 +61,10 @@
     
 ### 1. 调用方
     调用方将 API 接口包引入到工程中即可
-#### 非 Spring 模式
+#### 客户端非 Spring 模式
 ```java
     package org.sagesource.test.client;
+
     import org.sagesource.simplerpc.client.proxy.ServiceClientProxy;
     import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
     import org.sagesource.test.api.HelloWorldService;
@@ -83,10 +84,12 @@
             // 创建客户端，使用 Iface 接口模式
             HelloWorldService.Iface client = ServiceClientProxy.createClient(HelloWorldService.Iface.class, "1.0.0", protocolPoolConfig);
             client.sayHello("薛琪");
+            // 关闭 ZK 连接，可以在做在关闭工程的钩子上，不需要每次调用后都关闭
+            ZookeeperClientFactory.close();
     	}
     }
 ```
-#### Spring 模式
+#### 客户端 Spring 模式
 ```xml
     <!-- 注册 HelloWorldService 服务客户端 -->
         <bean id="helloWorldService" class="org.sagesource.simplerpc.spring.client.ServiceClientFactoryBean" destroy-method="close">
@@ -126,7 +129,59 @@
         }
     }
 ```
+
 ### 2. 服务提供方
+    服务方定义 API 接口，并实现
+#### 服务端非 Spring 模式
+```java
+    package org.sagesource.test.provider;
+    
+    import org.junit.After;
+    import org.junit.Test;
+    import org.sagesource.simplerpc.core.zookeeper.ZookeeperClientFactory;
+    import org.sagesource.simplerpc.provider.SimpleServiceProviderFactory;
+    import org.sagesource.test.api.impl.HelloWorldServiceImpl;
+    public class SimpleServiceProviderTest { 
+        @Test
+        public void test() throws Exception {
+            SimpleServiceProviderFactory simpleServiceProviderFactory = new SimpleServiceProviderFactory(8999, new HelloWorldServiceImpl(), "1.0.0");
+            simpleServiceProviderFactory.createServiceProvider();
+        
+            Thread.sleep(10000);
+        }
+        
+        @After
+        public void after() {
+        	// 关闭 ZK 连接，可以在做在关闭工程的钩子上，不需要每次调用后都关闭
+            SimpleServiceProviderFactory.close();
+            ZookeeperClientFactory.close();
+        }
+    }
+```
+#### 服务端非 Spring 模式
+```xml
+    <!-- 创建服务实现类 Spring Bean -->
+    <bean id="helloWorldService" class="org.sagesource.test.api.impl.HelloWorldServiceImpl"/>
+
+    <bean id="helloWorldServiceProvider" class="org.sagesource.simplerpc.spring.provider.ServiceProviderFactoryBean"
+          destroy-method="close">
+        <property name="port" value="9999"/>
+        <property name="serviceRef" ref="helloWorldService"/>
+        <property name="version" value="1.0.0"/>
+    </bean>
+```
+```java
+    package org.sagesource.test.provider;
+    
+    import org.springframework.context.support.ClassPathXmlApplicationContext;
+    
+    public class SpringSimpleProviderTest {
+        public static void main(String[] args) {
+        	// 启动 Spring 工程，通过客户单调用即可
+            new ClassPathXmlApplicationContext("classpath*:spring-provider.xml");
+        }
+    }
+```
 
 ## TODO LIST
 1. 规范化日志输出
@@ -136,4 +191,4 @@
 5. 异步调用
 6. Codegen 代码生成工具
 7. 本地 mock
-8. 服务端改造
+8. 服务端改造多路复用
