@@ -1,4 +1,4 @@
-### Simple-RPC
+## Simple-RPC
     Simple-RPC是基于 Thrift 实现的 Java RPC 框架。
     在个人平时学习的过程总，希望加深对 Thrift 和 RPC 的理解，故开发了一个简单的 RPC 框架。
     Simple-RPC对 Thrift 客户端的改造主要从如下：
@@ -25,33 +25,33 @@
                可以在 ClientStubBeforeFilter ClientStubPostFilter 中实现 trace 信息的上报，并生成 Trace 调用链。
             c. Filter 配置在 properties 中，灵活修改 Filter 的执行流程
 ---
-#### 模块介绍
-##### simple-rpc-basic
+## 模块介绍
+### simple-rpc-basic
     存放核心的基本类，工具类等信息
     - entity 自定义实体信息
     - exception 自定义异常
     - utils 工具类 
-#### simple-rpc-client
+### simple-rpc-client
     RPC 框架客户端实现，负责创建调用方客户端生成，过滤器等
     - filter 客户端过滤器
     - pool 客户端连接池工厂
     - proxy 服务调用动态代理实现
-##### simple-rpc-core
+### simple-rpc-core
     RPC 框架核心模块
     - loadbalance 负载均衡实现
     - protocol 通信协议重写
     - trace 追踪 trace 支持
     - zookeeper zk服务注册与发现 
-##### simple-rpc-provider
-##### simple-rpc-spring
+### simple-rpc-provider
+### simple-rpc-spring
     - client 调用方 Spring 支持
-##### simple-rpc-config
+### simple-rpc-config
     - 配置管理
-##### simple-rpc-test
+### simple-rpc-test
     单元测试
 
-#### 使用说明
-##### 0. 通用配置
+## 使用说明
+### 0. 通用配置
     # ZK 连接地址
     export SIMEPLE_RPC_ZK=127.0.0.1:2181
     # 客户端静态路由配置
@@ -59,11 +59,76 @@
     # 客户端静态路由 jvm 参数
     -Dsimplerpc.static.router=serviceName.version=ip:port,...
     
-##### 1. 调用方
+### 1. 调用方
+    调用方将 API 接口包引入到工程中即可
+#### 非 Spring 模式
+```java
+    package org.sagesource.test.client;
+    import org.sagesource.simplerpc.client.proxy.ServiceClientProxy;
+    import org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig;
+    import org.sagesource.test.api.HelloWorldService;
     
-##### 2. 服务提供方
+    public class HelloClientDemo {
+    	public static void main(String[] args) throws Exception {
+    		// 创建客户端 Zookeeper 连接池配置
+            ProtocolPoolConfig protocolPoolConfig = new ProtocolPoolConfig();
+            // zookeeper 连接是否为长连接，如果为 false，每次连接返回到连接池中，都会 close 掉
+            protocolPoolConfig.setKeepAlive(true);
+            // 连接池连接超时时间
+            protocolPoolConfig.setTimeout(300000);
+            // 参考 Apache Commons Pool2的 GenericObjectPoolConfig 配置即可
+            protocolPoolConfig.setMinIdle(1);
+            protocolPoolConfig.setMaxIdle(8);
+            protocolPoolConfig.setMaxTotal(8);
+            // 创建客户端，使用 Iface 接口模式
+            HelloWorldService.Iface client = ServiceClientProxy.createClient(HelloWorldService.Iface.class, "1.0.0", protocolPoolConfig);
+            client.sayHello("薛琪");
+    	}
+    }
+```
+#### Spring 模式
+```xml
+    <!-- 注册 HelloWorldService 服务客户端 -->
+        <bean id="helloWorldService" class="org.sagesource.simplerpc.spring.client.ServiceClientFactoryBean" destroy-method="close">
+            <property name="interfaceType" value="org.sagesource.test.api.HelloWorldService.Iface"/>
+            <property name="serviceVersion" value="1.0.0"/>
+            <property name="protocolPoolConfig">
+                <bean class="org.sagesource.simplerpc.basic.entity.ProtocolPoolConfig">
+                    <property name="maxIdle" value="50"/>
+                    <property name="minIdle" value="1"/>
+                    <property name="maxTotal" value="50"/>
+                </bean>
+            </property>
+        </bean>
+```
+```java
+    package org.sagesource.test.client;
+    
+    import org.apache.thrift.TException;
+    import org.junit.Test;
+    import org.junit.runner.RunWith;
+    import org.sagesource.test.api.HelloWorldService;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.beans.factory.annotation.Qualifier;
+    import org.springframework.test.context.ContextConfiguration;
+    import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+    
+    public class SpringClientDemo {
+	    @Autowired
+	    @Qualifier("helloWorldService")
+	    private HelloWorldService.Iface helloWorldService;
+	    
+	    @Test
+        public void test2() throws TException {
+            LOGGER.info(helloWorldService.sayHello("sage"));
+        }
+    }
+```
+### 2. 服务提供方
 
-#### TODO LIST
+## TODO LIST
 1. 规范化日志输出
 2. 优雅停机
 3. 监控 熔断机制
