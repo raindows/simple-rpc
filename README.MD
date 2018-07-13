@@ -177,7 +177,7 @@
     
     public class SpringSimpleProviderTest {
         public static void main(String[] args) {
-        	// 启动 Spring 工程，通过客户单调用即可
+            // 启动 Spring 工程，通过客户端调用即可
             new ClassPathXmlApplicationContext("classpath*:spring-provider.xml");
         }
     }
